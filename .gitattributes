@@ -1,2 +1,2 @@
-FlightBookingHtmlGenerator/templates/* linguist-vendored
-FlightBookingPdfGenerator/templates/* linguist-vendored
+FlightBookingHtmlGenerator/src/flight_booking_html_generator/templates/* linguist-vendored
+FlightBookingPdfGenerator/src/flight_booking_pdf_generator/templates/* linguist-vendored
