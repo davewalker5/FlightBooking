@@ -1,0 +1,15 @@
+{
+   "details": {
+      "airline": "EasyJet",
+      "number": "U28549",
+      "embarkation": "LGW",
+      "destination": "RMU",
+      "departs": "202111201045",
+      "duration": 7200,
+      "aircraft": null,
+      "layout": null,
+      "capacity": 0
+   },
+   "passengers": {},
+   "seating": null
+}

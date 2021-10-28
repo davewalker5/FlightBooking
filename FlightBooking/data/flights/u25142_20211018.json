@@ -1,0 +1,367 @@
+{
+   "details": {
+      "airline": "EasyJet",
+      "number": "U25142",
+      "embarkation": "ALC",
+      "destination": "LGW",
+      "departs": "202110182145",
+      "duration": 8100,
+      "aircraft": "A320",
+      "layout": "1",
+      "capacity": 186
+   },
+   "passengers": {
+      "3919ba08-3bc2-42c0-859c-9dbdcf610c2b": {
+         "id": "3919ba08-3bc2-42c0-859c-9dbdcf610c2b",
+         "name": "Some Passenger",
+         "gender": "M",
+         "dob": "19800101",
+         "nationality": "United Kingdom",
+         "residency": "United Kingdom",
+         "passport_number": "123456789"
+      }
+   },
+   "seating": {
+      "1": {
+         "class": "Up Front",
+         "seats": {
+            "1A": null,
+            "1B": null,
+            "1C": null,
+            "1D": null,
+            "1E": null,
+            "1F": null
+         }
+      },
+      "2": {
+         "class": "Up Front",
+         "seats": {
+            "2A": null,
+            "2B": null,
+            "2C": null,
+            "2D": null,
+            "2E": null,
+            "2F": null
+         }
+      },
+      "3": {
+         "class": "Up Front",
+         "seats": {
+            "3A": null,
+            "3B": null,
+            "3C": null,
+            "3D": null,
+            "3E": null,
+            "3F": null
+         }
+      },
+      "4": {
+         "class": "Up Front",
+         "seats": {
+            "4A": null,
+            "4B": null,
+            "4C": null,
+            "4D": null,
+            "4E": null,
+            "4F": null
+         }
+      },
+      "5": {
+         "class": "Up Front",
+         "seats": {
+            "5A": null,
+            "5B": "3919ba08-3bc2-42c0-859c-9dbdcf610c2b",
+            "5C": null,
+            "5D": null,
+            "5E": null,
+            "5F": null
+         }
+      },
+      "6": {
+         "class": "Up Front",
+         "seats": {
+            "6A": null,
+            "6B": null,
+            "6C": null,
+            "6D": null,
+            "6E": null,
+            "6F": null
+         }
+      },
+      "7": {
+         "class": "Economy",
+         "seats": {
+            "7A": null,
+            "7B": null,
+            "7C": null,
+            "7D": null,
+            "7E": null,
+            "7F": null
+         }
+      },
+      "8": {
+         "class": "Economy",
+         "seats": {
+            "8A": null,
+            "8B": null,
+            "8C": null,
+            "8D": null,
+            "8E": null,
+            "8F": null
+         }
+      },
+      "9": {
+         "class": "Economy",
+         "seats": {
+            "9A": null,
+            "9B": null,
+            "9C": null,
+            "9D": null,
+            "9E": null,
+            "9F": null
+         }
+      },
+      "10": {
+         "class": "Economy",
+         "seats": {
+            "10A": null,
+            "10B": null,
+            "10C": null,
+            "10D": null,
+            "10E": null,
+            "10F": null
+         }
+      },
+      "11": {
+         "class": "Economy",
+         "seats": {
+            "11A": null,
+            "11B": null,
+            "11C": null,
+            "11D": null,
+            "11E": null,
+            "11F": null
+         }
+      },
+      "12": {
+         "class": "Economy",
+         "seats": {
+            "12A": null,
+            "12B": null,
+            "12C": null,
+            "12D": null,
+            "12E": null,
+            "12F": null
+         }
+      },
+      "13": {
+         "class": "Economy",
+         "seats": {
+            "13A": null,
+            "13B": null,
+            "13C": null,
+            "13D": null,
+            "13E": null,
+            "13F": null
+         }
+      },
+      "14": {
+         "class": "Economy",
+         "seats": {
+            "14A": null,
+            "14B": null,
+            "14C": null,
+            "14D": null,
+            "14E": null,
+            "14F": null
+         }
+      },
+      "15": {
+         "class": "Economy",
+         "seats": {
+            "15A": null,
+            "15B": null,
+            "15C": null,
+            "15D": null,
+            "15E": null,
+            "15F": null
+         }
+      },
+      "16": {
+         "class": "Economy",
+         "seats": {
+            "16A": null,
+            "16B": null,
+            "16C": null,
+            "16D": null,
+            "16E": null,
+            "16F": null
+         }
+      },
+      "17": {
+         "class": "Economy",
+         "seats": {
+            "17A": null,
+            "17B": null,
+            "17C": null,
+            "17D": null,
+            "17E": null,
+            "17F": null
+         }
+      },
+      "18": {
+         "class": "Economy",
+         "seats": {
+            "18A": null,
+            "18B": null,
+            "18C": null,
+            "18D": null,
+            "18E": null,
+            "18F": null
+         }
+      },
+      "19": {
+         "class": "Economy",
+         "seats": {
+            "19A": null,
+            "19B": null,
+            "19C": null,
+            "19D": null,
+            "19E": null,
+            "19F": null
+         }
+      },
+      "20": {
+         "class": "Economy",
+         "seats": {
+            "20A": null,
+            "20B": null,
+            "20C": null,
+            "20D": null,
+            "20E": null,
+            "20F": null
+         }
+      },
+      "21": {
+         "class": "Economy",
+         "seats": {
+            "21A": null,
+            "21B": null,
+            "21C": null,
+            "21D": null,
+            "21E": null,
+            "21F": null
+         }
+      },
+      "22": {
+         "class": "Economy",
+         "seats": {
+            "22A": null,
+            "22B": null,
+            "22C": null,
+            "22D": null,
+            "22E": null,
+            "22F": null
+         }
+      },
+      "23": {
+         "class": "Economy",
+         "seats": {
+            "23A": null,
+            "23B": null,
+            "23C": null,
+            "23D": null,
+            "23E": null,
+            "23F": null
+         }
+      },
+      "24": {
+         "class": "Economy",
+         "seats": {
+            "24A": null,
+            "24B": null,
+            "24C": null,
+            "24D": null,
+            "24E": null,
+            "24F": null
+         }
+      },
+      "25": {
+         "class": "Economy",
+         "seats": {
+            "25A": null,
+            "25B": null,
+            "25C": null,
+            "25D": null,
+            "25E": null,
+            "25F": null
+         }
+      },
+      "26": {
+         "class": "Economy",
+         "seats": {
+            "26A": null,
+            "26B": null,
+            "26C": null,
+            "26D": null,
+            "26E": null,
+            "26F": null
+         }
+      },
+      "27": {
+         "class": "Economy",
+         "seats": {
+            "27A": null,
+            "27B": null,
+            "27C": null,
+            "27D": null,
+            "27E": null,
+            "27F": null
+         }
+      },
+      "28": {
+         "class": "Economy",
+         "seats": {
+            "28A": null,
+            "28B": null,
+            "28C": null,
+            "28D": null,
+            "28E": null,
+            "28F": null
+         }
+      },
+      "29": {
+         "class": "Economy",
+         "seats": {
+            "29A": null,
+            "29B": null,
+            "29C": null,
+            "29D": null,
+            "29E": null,
+            "29F": null
+         }
+      },
+      "30": {
+         "class": "Economy",
+         "seats": {
+            "30A": null,
+            "30B": null,
+            "30C": null,
+            "30D": null,
+            "30E": null,
+            "30F": null
+         }
+      },
+      "31": {
+         "class": "Economy",
+         "seats": {
+            "31A": null,
+            "31B": null,
+            "31C": null,
+            "31D": null,
+            "31E": null,
+            "31F": null
+         }
+      }
+   }
+}
