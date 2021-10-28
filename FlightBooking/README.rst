@@ -3,12 +3,8 @@ flight_booking
 A tutorial/demonstration project implementing a Python package for creating and managing airline flight bookings and
 passengers.
 
-The project was inspired by an example in the "Core Python : Getting Started" PluralSight course by Austin
-Bingham and Robert Smallshire.
-
-The boarding card template is taken from the following Codepen by @ramiru:
-
-https://codepen.io/ramiru/pen/oXmyyy
+The project was inspired by an example in the "Core Python : Getting Started" PluralSight course by Austin Bingham and
+Robert Smallshire.
 
 Example
 -------
