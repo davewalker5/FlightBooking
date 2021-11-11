@@ -1,7 +1,19 @@
 {
   "airport_codes": {
-    "ALC": "Alicante",
-    "LGW": "London Gatwick",
-    "RMU": "Murcia International Airport"
+    "ALC": {
+      "code": "ALC",
+      "name": "Alicante",
+      "tz": "Europe/Madrid"
+    },
+    "LGW": {
+      "code": "LGW",
+      "name": "London Gatwick",
+      "tz": "Europe/London"
+    },
+    "RMU": {
+      "code": "RMU",
+      "name": "Murcia International Airport",
+      "tz": "Europe/Madrid"
+    }
   }
 }

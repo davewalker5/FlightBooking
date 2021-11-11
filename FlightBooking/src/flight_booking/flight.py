@@ -1,9 +1,10 @@
-import re
 import json
 import datetime
 import pkg_resources
 from .seating_plan import read_plan, allocate_seat, copy_seat_allocations, get_unallocated_seats, get_allocated_seat
-from .utils import get_flight_file_path, get_boarding_card_path, get_lookup_file_path
+from .utils import get_flight_file_path, get_boarding_card_path
+from .airport import get_airport
+import pytz
 
 DEPARTURE_DATE_FORMAT = "%Y%m%d%H%M"
 
@@ -23,55 +24,153 @@ card_generator_map = {
 }
 
 
-def load_airport_code_lookup():
-    """
-    Load the file containing the lookups between airport codes and airport names
-
-    :return: A dictionary with airport codes as the keys and names as the values
-    """
-    code_file = get_lookup_file_path("airport_codes.json")
-    with open(code_file, mode="rt", encoding="utf-8") as f:
-        json_data = json.load(f)
-    return json_data["airport_codes"]
-
-
-def validate_airport_code(airport_code):
-    """
-    Validate the format of the specified airport code
-
-    :param airport_code: Airport code to validate
-    """
-    if airport_code is not None and re.match("[A-Z]{3}$", airport_code) is None:
-        raise ValueError(f"{airport_code} is not a valid airport code")
-
-
 class Flight:
-    def __init__(self, **kwargs):
+    def __init__(self, embarkation, destination, airline, number, departs, duration):
         """
         Initialise an instance of the Flight class. The flight properties should contain:
 
-        airline: Name of the airline
-        number: Flight number
-        embarkation: Airport code for the point of embarkation
-        destination: Airport code for the destination
-        departs: Departure time
-        duration: Flight duration
-
-        :param kwargs: Flight properties
+        :param embarkation: Airport code for the point of embarkation
+        :param destination: Airport code for the destination airport
+        :param airline: Name of the airline
+        :param number: Flight number
+        :param departs: Departure time
+        :param duration: Flight duration
         """
-        self._embarkation = kwargs.get("embarkation", None)
-        self._destination = kwargs.get("destination", None)
-        validate_airport_code(self._embarkation)
-        validate_airport_code(self._destination)
-        self._airline = kwargs.get("airline", None)
-        self._number = kwargs.get("number", None)
-        self._departs = kwargs.get("departs", None)
-        self._duration = kwargs.get("duration", None)
+        self._embarkation = get_airport(embarkation)
+        self._destination = get_airport(destination)
+        self._airline = airline
+        self._number = number
+
+        # Store the departure date and time as UTC
+        if departs.tzinfo is None:
+            departs_with_tz = pytz.timezone(self._embarkation["tz"]).localize(departs)
+            self._departs = departs_with_tz.astimezone(pytz.utc)
+        else:
+            self._departs = departs.astimezone(pytz.utc)
+
+        self._duration = duration
         self._passengers = {}
         self._seating = None
         self._aircraft = None
         self._layout = None
         self._capacity = 0
+
+    def __repr__(self):
+        return f"{type(self).__name__}(" \
+               f"embarkation={self._embarkation['code']}, " \
+               f"destination={self._destination['code']}, " \
+               f"airline={self._airline!r}, " \
+               f"number={self._number!r}, " \
+               f"departs={self._departure_time_repr()}, " \
+               f"duration={self._duration!r}" \
+               f")"
+
+    def __str__(self):
+        # As __format__ hasn't been overridden, it'll delegate to __str__ and produce the same output
+        return f"{self._airline} {self._number} " \
+               f"{self._embarkation['code']} to {self._destination['code']}, " \
+               f"{self.departs_localtime.strftime('%d-%b-%Y %H:%M %p')}"
+
+    def _departure_time_repr(self):
+        """
+        For dates with timezones, repr(x) doesn't return something that can be used to reconstruct a datetime using
+        the Python REPL. This method does, for the departure date and time
+
+        :return: repr() for the departure date and time
+        """
+        return f"datetime.datetime({self._departs.year}, " \
+               f"{self._departs.month}, " \
+               f"{self._departs.day}, " \
+               f"{self._departs.hour}, " \
+               f"{self._departs.minute}, " \
+               f"tzinfo=datetime.timezone.utc)"
+
+    @property
+    def embarkation_airport_code(self):
+        return self._embarkation["code"]
+
+    @property
+    def destination_airport_code(self):
+        return self._destination["code"]
+
+    @property
+    def airline(self):
+        return self._airline
+
+    @property
+    def number(self):
+        return self._number
+
+    @property
+    def seating_plan(self):
+        """
+        Return the seating plan for the flight or None if the seating plan
+        hasn't been loaded
+
+        :return: The seating plan
+        """
+        return self._seating
+
+    @property
+    def departure_date(self):
+        return self._departs.date()
+
+    @property
+    def departs_localtime(self):
+        embarkation_timezone = pytz.timezone(self._embarkation["tz"])
+        return self._departs.astimezone(embarkation_timezone)
+
+    @property
+    def arrives_localtime(self):
+        arrives_utc = self._departs + self._duration
+        destination_timezone = pytz.timezone(self._destination["tz"])
+        return arrives_utc.astimezone(destination_timezone)
+
+    @property
+    def duration(self):
+        """
+        Return a tuple representing the flight duration
+
+        :return: (hours, minutes)
+        """
+        return self._duration.seconds // 3600, (self._duration.seconds // 60) % 60
+
+    @property
+    def capacity(self):
+        """
+        Return the total number of seats on the flight
+
+        :return: Total number of seats on the flight or 0 if a seating plan hasn't been loaded
+        """
+        return self._capacity
+
+    @property
+    def passengers(self):
+        """
+        Return the passenger collection
+
+        :return: The passengers
+        """
+        return self._passengers
+
+    @property
+    def printable_details(self):
+        """
+        Return a list of printable flight details
+
+        :return: List of details formatted for printing, one detail per entry
+        """
+        return [
+            f"Airline        : {self._airline}",
+            f"Flight Number  : {self._number}",
+            f"Embarkation    : {self._embarkation['code']}",
+            f"Destination    : {self._destination['code']}",
+            f"Departs        : {self.departs_localtime.strftime('%Y-%m-%d %H:%M:00')}",
+            f"Duration       : {self._duration}",
+            f"Aircraft       : {self._aircraft}",
+            f"Seating Layout : {self._layout}",
+            f"Capacity       : {self._capacity}"
+        ]
 
     def load_seating(self, aircraft, layout):
         """
@@ -95,25 +194,6 @@ class Flight:
             copy_seat_allocations(self._seating, to_plan)
 
         self._seating = to_plan
-
-    @property
-    def seating_plan(self):
-        """
-        Return the seating plan for the flight or None if the seating plan
-        hasn't been loaded
-
-        :return: The seating plan
-        """
-        return self._seating
-
-    @property
-    def capacity(self):
-        """
-        Return the total number of seats on the flight
-
-        :return: Total number of seats on the flight
-        """
-        return self._capacity
 
     def add_passenger(self, passenger):
         """
@@ -146,15 +226,6 @@ class Flight:
         """
         return get_allocated_seat(self._seating, passenger_id)
 
-    @property
-    def passengers(self):
-        """
-        Return the passenger collection
-
-        :return: The passengers
-        """
-        return self._passengers
-
     def to_json(self):
         """
         Convert the core flight data, passenger list and seating plan to JSON
@@ -164,8 +235,8 @@ class Flight:
         details_json = json.dumps({
             "airline": self._airline,
             "number": self._number,
-            "embarkation": self._embarkation,
-            "destination": self._destination,
+            "embarkation": self._embarkation["code"],
+            "destination": self._destination["code"],
             "departs": self._departs.strftime(DEPARTURE_DATE_FORMAT),
             "duration": self._duration.seconds,
             "aircraft": self._aircraft,
@@ -188,42 +259,20 @@ class Flight:
         with open(file_path, mode="wt", encoding="utf-8") as f:
             f.write(self.to_json())
 
-    @property
-    def printable_details(self):
-        """
-        Return a list of printable flight details
-
-        :return: List of details formatted for printing, one detail per entry
-        """
-        return [
-            f"Airline        : {self._airline}",
-            f"Flight Number  : {self._number}",
-            f"Embarkation    : {self._embarkation}",
-            f"Destination    : {self._destination}",
-            f"Departs        : {self._departs}",
-            f"Duration       : {self._duration}",
-            f"Aircraft       : {self._aircraft}",
-            f"Seating Layout : {self._layout}",
-            f"Capacity       : {self._capacity}"
-        ]
-
     def generate_boarding_cards(self, card_format, gate):
-        airport_codes = load_airport_code_lookup()
         generator = card_generator_map[card_format]
-        arrival_time = self._departs + self._duration
-
         for passenger_id in self._passengers:
             # Construct the card details for this passenger and generate the card
             seat_number = get_allocated_seat(self._seating, passenger_id)
             card_data = generator({
                 "gate": gate,
                 "airline": self._airline,
-                "embarkation_name": airport_codes[self._embarkation],
-                "embarkation": self._embarkation,
-                "departs": self._departs.strftime("%I:%M %p"),
-                "destination_name": airport_codes[self._destination],
-                "destination": self._destination,
-                "arrives": arrival_time.strftime("%I:%M %p"),
+                "embarkation_name": self._embarkation["name"],
+                "embarkation": self._embarkation["code"],
+                "departs": self.departs_localtime.strftime("%I:%M %p"),
+                "destination_name": self._destination["name"],
+                "destination": self._destination["code"],
+                "arrives": self.arrives_localtime.strftime("%I:%M %p"),
                 "name": self._passengers[passenger_id]["name"],
                 "seat_number": seat_number
             })

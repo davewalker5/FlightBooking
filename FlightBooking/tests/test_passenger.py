@@ -9,15 +9,15 @@ class TestPassenger(unittest.TestCase):
             "Fred Bloggs",
             "M",
             datetime.datetime(1980, 1, 1),
-            "United Kingdom",
+            "England",
             "United Kingdom",
             "123456789")
 
     def test_create_passenger(self):
         self.assertIsNotNone(self._passenger["id"])
-        self.assertEqual(self._passenger["name"], "Fred Bloggs")
+        self.assertEqual("Fred Bloggs", self._passenger["name"])
         self.assertEqual(self._passenger["gender"], "M")
-        self.assertEqual(self._passenger["dob"], datetime.datetime(1980, 1, 1).strftime("%Y%m%d"))
-        self.assertEqual(self._passenger["nationality"], "United Kingdom")
-        self.assertEqual(self._passenger["residency"], "United Kingdom")
-        self.assertEqual(self._passenger["passport_number"], "123456789")
+        self.assertEqual(datetime.datetime(1980, 1, 1).strftime("%Y%m%d"), self._passenger["dob"])
+        self.assertEqual("England", self._passenger["nationality"])
+        self.assertEqual("United Kingdom", self._passenger["residency"])
+        self.assertEqual("123456789", self._passenger["passport_number"])

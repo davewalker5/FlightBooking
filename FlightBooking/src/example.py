@@ -15,11 +15,11 @@ def create_flight():
     # Create a flight
     flight = Flight(
         airline="EasyJet",
-        number="U25142",
-        embarkation="ALC",
-        destination="LGW",
-        departs=datetime.datetime(2021, 10, 18, 21, 45, 0),
-        duration=datetime.timedelta(hours=2, minutes=15)
+        number="U28549",
+        embarkation="LGW",
+        destination="RMU",
+        departs=datetime.datetime(2021, 11, 20, 10, 45, 0),
+        duration=datetime.timedelta(hours=2, minutes=35)
     )
 
     # Load the seating plan for the aircraft
@@ -98,7 +98,7 @@ def run_example():
     original.save()
 
     # Reload the flight into a new instance and dump the flight details
-    loaded = Flight.load_flight("U25142", datetime.datetime(2021, 10, 18, 21, 45, 0))
+    loaded = Flight.load_flight("U28549", datetime.datetime(2021, 11, 20, 0, 0, 0))
     print("\n".join(loaded.printable_details))
 
     # Dump the passenger list
@@ -115,6 +115,11 @@ def run_example():
     passenger_id = list(passengers)[0]
     loaded.allocate_seat("5B", passenger_id)
     pp(loaded.seating_plan)
+
+    # Demonstrate overridden string representations
+    print(repr(loaded))
+    print(loaded)
+    print(f"{loaded}")
 
     try:
         # If the boarding card plugin hasn't been installed in the project's venv

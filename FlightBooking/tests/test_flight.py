@@ -36,7 +36,7 @@ class TestFlight(unittest.TestCase):
             embarkation="LGW",
             destination="RMU",
             departs=datetime.datetime(2021, 11, 20, 10, 45, 0),
-            duration=datetime.timedelta(hours=2, minutes=0)
+            duration=datetime.timedelta(hours=2, minutes=35)
         )
 
         # Create a passenger for testing
@@ -49,23 +49,30 @@ class TestFlight(unittest.TestCase):
             "123456789")
 
     def test_create_flight_with_invalid_airport_code(self):
-        with self.assertRaises(ValueError):
-            Flight(embarkation="DODGY")
+        with self.assertRaises(KeyError):
+            Flight(
+                airline="EasyJet",
+                number="U28549",
+                embarkation="DODGY",
+                destination="RMU",
+                departs=datetime.datetime(2021, 11, 20, 10, 45, 0),
+                duration=datetime.timedelta(hours=2, minutes=30)
+            )
 
     def test_load_seating(self):
         self.assertIsNone(self._flight.seating_plan)
-        self.assertEqual(self._flight.capacity, 0)
+        self.assertEqual(0, self._flight.capacity)
         self._flight.load_seating("A321", "neo")
         self.assertIsNotNone(self._flight.seating_plan)
-        self.assertEqual(self._flight.capacity, 235)
+        self.assertEqual(235, self._flight.capacity)
 
     def test_add_passenger(self):
         passengers = self._flight.passengers
-        self.assertEqual(len(passengers), 0)
+        self.assertEqual(0, len(passengers))
 
         self._flight.add_passenger(self._passenger)
         passengers = self._flight.passengers
-        self.assertEqual(len(passengers), 1)
+        self.assertEqual(1, len(passengers))
 
     def test_add_passenger_twice(self):
         with self.assertRaises(ValueError):
@@ -79,7 +86,7 @@ class TestFlight(unittest.TestCase):
         self.assertIsNone(self._flight.get_allocated_seat(pid))
 
         self._flight.allocate_seat("5D", pid)
-        self.assertEqual(self._flight.get_allocated_seat(pid), "5D")
+        self.assertEqual("5D", self._flight.get_allocated_seat(pid))
 
     def test_allocate_seat_to_missing_passenger(self):
         with self.assertRaises(ValueError):
@@ -91,11 +98,11 @@ class TestFlight(unittest.TestCase):
 
         pid = self._passenger["id"]
         self._flight.allocate_seat("5D", pid)
-        self.assertEqual(self._flight.get_allocated_seat(pid), "5D")
+        self.assertEqual("5D", self._flight.get_allocated_seat(pid))
 
         pid = self._passenger["id"]
         self._flight.allocate_seat("7F", pid)
-        self.assertEqual(self._flight.get_allocated_seat(pid), "7F")
+        self.assertEqual("7F", self._flight.get_allocated_seat(pid))
 
     def test_reload_seating_plan(self):
         self._flight.load_seating("A321", "neo")
@@ -105,13 +112,13 @@ class TestFlight(unittest.TestCase):
         self._flight.allocate_seat("5D", pid)
 
         self._flight.load_seating("A320", "1")
-        self.assertEqual(self._flight.get_allocated_seat(pid), "5D")
+        self.assertEqual("5D", self._flight.get_allocated_seat(pid))
 
     def test_reload_seating_plan_with_no_allocations(self):
         self._flight.load_seating("A320", "1")
-        self.assertEqual(self._flight.capacity, 186)
+        self.assertEqual(186, self._flight.capacity)
         self._flight.load_seating("A321", "neo")
-        self.assertEqual(self._flight.capacity, 235)
+        self.assertEqual(235, self._flight.capacity)
 
     def test_get_passengers(self):
         self._flight.add_passenger(self._passenger)
@@ -124,7 +131,7 @@ class TestFlight(unittest.TestCase):
     def test_get_seating_plan(self):
         self._flight.load_seating("A321", "neo")
         self.assertIsNotNone(self._flight.seating_plan)
-        self.assertEqual(self._flight.capacity, 235)
+        self.assertEqual(235, self._flight.capacity)
 
     def test_to_json(self):
         json_data = self._flight.to_json()
@@ -147,16 +154,16 @@ class TestFlight(unittest.TestCase):
         self._flight.save()
 
         flight = Flight.load_flight("U28549", datetime.datetime(2021, 11, 20, 10, 45, 0))
-        self.assertEqual(flight._number, "U28549")
-        self.assertEqual(len(flight.passengers), 1)
+        self.assertEqual("U28549", flight._number)
+        self.assertEqual(1, len(flight.passengers))
         self.assertIsNotNone(flight.seating_plan)
-        self.assertEqual(flight.capacity, 235)
-        self.assertEqual(flight.get_allocated_seat(self._passenger["id"]), "5D")
+        self.assertEqual(235, flight.capacity)
+        self.assertEqual("5D", flight.get_allocated_seat(self._passenger["id"]))
 
     def test_get_details(self):
         details = "\n".join(self._flight.printable_details)
-        expected = ["EasyJet", "U28549", "LGW", "RMU", "2021-11-20 10:45:00", "2:00:00"]
-        for value in  expected:
+        expected = ["EasyJet", "U28549", "LGW", "RMU", "2021-11-20 10:45:00", "2:35:00"]
+        for value in expected:
             self.assertTrue(value in details)
 
     @patch("src.flight_booking.flight.card_generator_map", {"txt": card_generator})
@@ -179,7 +186,7 @@ class TestFlight(unittest.TestCase):
         self.assertIn("LGW", contents)
         self.assertIn("10:45 AM", contents)
         self.assertIn("RMU", contents)
-        self.assertIn("12:45 PM", contents)
+        self.assertIn("02:20 PM", contents)
         self.assertIn("Some Passenger", contents)
 
     @patch("src.flight_booking.flight.card_generator_map", {"dat": binary_card_generator})
@@ -202,5 +209,5 @@ class TestFlight(unittest.TestCase):
         self.assertIn("LGW", contents)
         self.assertIn("10:45 AM", contents)
         self.assertIn("RMU", contents)
-        self.assertIn("12:45 PM", contents)
+        self.assertIn("02:20 PM", contents)
         self.assertIn("Some Passenger", contents)
