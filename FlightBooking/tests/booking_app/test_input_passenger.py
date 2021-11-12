@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from src.flight_booking.data_entry import input_passenger
+from src.booking_app.data_entry import input_passenger
 
 
 class TestInputPassenger(unittest.TestCase):

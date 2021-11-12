@@ -1,7 +1,7 @@
 import unittest
 from datetime import time
 from unittest.mock import patch
-from src.flight_booking.data_entry import input_departure_time
+from src.booking_app.data_entry import input_departure_time
 
 
 class TestInputDepartureTime(unittest.TestCase):
@@ -13,13 +13,20 @@ class TestInputDepartureTime(unittest.TestCase):
         self.assertEqual(45, departure_time.minute)
         self.assertEqual(0, departure_time.second)
 
-    @patch("builtins.input", side_effect=["13:67", "46:45", "Not a time", "13:45"])
-    def test_invalid_time_string_prompts_until_correct(self, _):
-        departure_time = input_departure_time()
-        self.assertTrue(isinstance(departure_time, time))
-        self.assertEqual(13, departure_time.hour)
-        self.assertEqual(45, departure_time.minute)
-        self.assertEqual(0, departure_time.second)
+    @patch("builtins.input", side_effect=["25:00"])
+    def test_invalid_hours_raises_error(self, _):
+        with self.assertRaises(ValueError):
+            _ = input_departure_time()
+
+    @patch("builtins.input", side_effect=["13:60"])
+    def test_invalid_minutes_raises_error(self, _):
+        with self.assertRaises(ValueError):
+            _ = input_departure_time()
+
+    @patch("builtins.input", side_effect=["Not a time"])
+    def test_invalid_time_string_raises_error(self, _):
+        with self.assertRaises(ValueError):
+            _ = input_departure_time()
 
     @patch("builtins.input", side_effect=["  13:45  "])
     def test_leading_trailing_whitespace_is_ignored(self, _):

@@ -1,7 +1,7 @@
 import unittest
 import datetime
 from unittest.mock import patch
-from src.flight_booking.data_entry import input_date, input_past_date, input_future_date
+from src.booking_app.data_entry import input_date, input_past_date, input_future_date
 
 
 class TestInputUtils(unittest.TestCase):
@@ -45,17 +45,17 @@ class TestInputUtils(unittest.TestCase):
         d = input_date("")
         self.assertIsNone(d)
 
-    @patch("builtins.input", side_effect=[datetime.datetime.now().strftime("%d/%m/%Y"), ""])
+    @patch("builtins.input", side_effect=[datetime.datetime.now().strftime("%d/%m/%Y")])
     def test_now_is_not_a_valid_past_date(self, _):
         # This is potentially vulnerable to failure if the test starts at midnight and we're now in
         # the next day ... choosing to treat this as an unlikely edge case
-        d = input_past_date("")
-        self.assertIsNone(d)
+        with self.assertRaises(ValueError):
+            _ = input_past_date("")
 
-    @patch("builtins.input", side_effect=["01/02/9999", ""])
+    @patch("builtins.input", side_effect=["01/02/9999"])
     def test_future_date_is_not_a_valid_past_date(self, _):
-        d = input_past_date("")
-        self.assertIsNone(d)
+        with self.assertRaises(ValueError):
+            _ = input_past_date("")
 
     @patch("builtins.input", side_effect=["01/02/1970"])
     def test_past_date_is_valid_past_date(self, _):
@@ -65,17 +65,17 @@ class TestInputUtils(unittest.TestCase):
         self.assertEqual(2, d.month)
         self.assertEqual(1970, d.year)
 
-    @patch("builtins.input", side_effect=[datetime.datetime.now().strftime("%d/%m/%Y"), ""])
+    @patch("builtins.input", side_effect=[datetime.datetime.now().strftime("%d/%m/%Y")])
     def test_now_is_not_a_valid_future_date(self, _):
         # This is potentially vulnerable to failure if the test starts at midnight and we're now in
         # the next day ... choosing to treat this as an unlikely edge case
-        d = input_future_date("")
-        self.assertIsNone(d)
+        with self.assertRaises(ValueError):
+            _ = input_future_date("")
 
-    @patch("builtins.input", side_effect=["01/02/1970", ""])
+    @patch("builtins.input", side_effect=["01/02/1970"])
     def test_past_date_is_not_a_valid_future_date(self, _):
-        d = input_future_date("")
-        self.assertIsNone(d)
+        with self.assertRaises(ValueError):
+            _ = input_future_date("")
 
     @patch("builtins.input", side_effect=["01/02/9999"])
     def test_future_date_is_a_valid_future_date(self, _):

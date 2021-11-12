@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from src.flight_booking.data_entry import trimmed_input
+from src.booking_app.data_entry import trimmed_input
 
 
 class TestInputUtils(unittest.TestCase):

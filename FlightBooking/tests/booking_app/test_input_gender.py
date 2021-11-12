@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from src.flight_booking.data_entry import input_gender
+from src.booking_app.data_entry import input_gender
 
 
 class TestInputGender(unittest.TestCase):
@@ -24,10 +24,10 @@ class TestInputGender(unittest.TestCase):
         gender = input_gender()
         self.assertEqual("M", gender)
 
-    @patch("builtins.input", side_effect=["a", "b", "c", "d", "m"])
-    def test_invalid_prompts_until_correct(self, _):
-        gender = input_gender()
-        self.assertEqual("M", gender)
+    @patch("builtins.input", side_effect=["a"])
+    def test_invalid_gender_errors(self, _):
+        with self.assertRaises(ValueError):
+            _ = input_gender()
 
     @patch("builtins.input", side_effect=[""])
     def test_empty_input_cancels(self, _):

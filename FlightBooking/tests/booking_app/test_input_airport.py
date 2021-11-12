@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
-from src.flight_booking.data_entry import input_airport_code
+from src.booking_app.data_entry import input_airport_code
+from src.booking_app.exceptions import InvalidAirportCodeError
 
 
 class TestInputAirport(unittest.TestCase):
@@ -13,10 +14,10 @@ class TestInputAirport(unittest.TestCase):
 
     @patch("src.flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"}})
-    @patch("builtins.input", side_effect=["LHR", "JFK", "RMU", "ALC", "ORD", "LGW"])
-    def test_input_invalid_airport_code_prompts_until_correct(self, _):
-        airport = input_airport_code("Embarkation")
-        self.assertEqual("LGW", airport["code"])
+    @patch("builtins.input", side_effect=["LHR"])
+    def test_input_invalid_airport_code_errors(self, _):
+        with self.assertRaises(InvalidAirportCodeError):
+            _ = input_airport_code("Embarkation")
 
     @patch("builtins.input", side_effect=[""])
     def test_empty_input_cancels(self, _):

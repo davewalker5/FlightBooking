@@ -2,8 +2,8 @@ import unittest
 import datetime
 from unittest.mock import patch
 from src.flight_booking.flight import Flight
-from src.flight_booking.data_entry import input_aircraft_seating_plan
-
+from src.booking_app.data_entry import input_aircraft_seating_plan
+from src.booking_app.exceptions import InvalidAircraftSeatingPlanError
 
 class TestInputSeatingPlan(unittest.TestCase):
     """
@@ -42,13 +42,20 @@ class TestInputSeatingPlan(unittest.TestCase):
         self.assertEqual("1", self._flight.layout)
         self.assertEqual(186, self._flight.capacity)
 
-    @patch("builtins.input", side_effect=["A380", "747", "787-10", "737", "A320:1"])
-    def test_invalid_plan_prompts_until_correct(self, _):
-        input_aircraft_seating_plan(self._flight)
-        self.assertIsNotNone(self._flight.seating_plan)
-        self.assertEqual("A320", self._flight.aircraft)
-        self.assertEqual("1", self._flight.layout)
-        self.assertEqual(186, self._flight.capacity)
+    @patch("builtins.input", side_effect=["A380"])
+    def test_invalid_aircraft_errors(self, _):
+        with self.assertRaises(InvalidAircraftSeatingPlanError):
+            input_aircraft_seating_plan(self._flight)
+
+    @patch("builtins.input", side_effect=["A320:2"])
+    def test_invalid_layout_for_valid_aircraft_errors(self, _):
+        with self.assertRaises(InvalidAircraftSeatingPlanError):
+            input_aircraft_seating_plan(self._flight)
+
+    @patch("builtins.input", side_effect=["A320:1:2"])
+    def test_badly_formatted_seating_plan_errors(self, _):
+        with self.assertRaises(InvalidAircraftSeatingPlanError):
+            input_aircraft_seating_plan(self._flight)
 
     @patch("builtins.input", side_effect=[""])
     def test_empty_input_cancels(self, _):

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from src.flight_booking.flight import Flight
-from src.flight_booking.data_entry import input_flight
+from src.booking_app.data_entry import input_flight
 
 
 class TestInputFlightDetails(unittest.TestCase):
