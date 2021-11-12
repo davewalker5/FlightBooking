@@ -2,7 +2,7 @@ import unittest
 import datetime
 from unittest.mock import patch
 from src.flight_booking.flight import Flight
-from src.flight_booking.data_entry import input_aircraft
+from src.flight_booking.data_entry import input_aircraft_seating_plan
 
 
 class TestInputSeatingPlan(unittest.TestCase):
@@ -20,7 +20,7 @@ class TestInputSeatingPlan(unittest.TestCase):
 
     @patch("builtins.input", side_effect=["A320:1"])
     def test_valid_seating_plan_with_layout(self, _):
-        input_aircraft(self._flight)
+        input_aircraft_seating_plan(self._flight)
         self.assertIsNotNone(self._flight.seating_plan)
         self.assertEqual("A320", self._flight.aircraft)
         self.assertEqual("1", self._flight.layout)
@@ -28,7 +28,7 @@ class TestInputSeatingPlan(unittest.TestCase):
 
     @patch("builtins.input", side_effect=["A320"])
     def test_valid_seating_plan_with_no_layout(self, _):
-        input_aircraft(self._flight)
+        input_aircraft_seating_plan(self._flight)
         self.assertIsNotNone(self._flight.seating_plan)
         self.assertEqual("A320", self._flight.aircraft)
         self.assertEqual(None, self._flight.layout)
@@ -36,7 +36,7 @@ class TestInputSeatingPlan(unittest.TestCase):
 
     @patch("builtins.input", side_effect=["  A320  :  1  "])
     def test_leading_trailing_whitespace_is_ignored(self, _):
-        input_aircraft(self._flight)
+        input_aircraft_seating_plan(self._flight)
         self.assertIsNotNone(self._flight.seating_plan)
         self.assertEqual("A320", self._flight.aircraft)
         self.assertEqual("1", self._flight.layout)
@@ -44,7 +44,7 @@ class TestInputSeatingPlan(unittest.TestCase):
 
     @patch("builtins.input", side_effect=["A380", "747", "787-10", "737", "A320:1"])
     def test_invalid_plan_prompts_until_correct(self, _):
-        input_aircraft(self._flight)
+        input_aircraft_seating_plan(self._flight)
         self.assertIsNotNone(self._flight.seating_plan)
         self.assertEqual("A320", self._flight.aircraft)
         self.assertEqual("1", self._flight.layout)
@@ -52,4 +52,5 @@ class TestInputSeatingPlan(unittest.TestCase):
 
     @patch("builtins.input", side_effect=[""])
     def test_empty_input_cancels(self, _):
-        input_aircraft(self._flight)
+        input_aircraft_seating_plan(self._flight)
+        self.assertIsNone(self._flight.seating_plan)

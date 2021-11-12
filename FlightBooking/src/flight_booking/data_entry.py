@@ -26,7 +26,7 @@ def input_airline():
     """
     Prompt for and return an airline name
 
-    :return: Airline name or empty to cancel
+    :return: Airline name or an empty string to cancel
     """
     return input("Airline [ENTER to quit] ").strip()
 
@@ -35,7 +35,7 @@ def input_flight_number():
     """
     Prompt for and return a flight number
 
-    :return: Flight number or empty to cancel
+    :return: Flight number or an empty string to cancel
     """
     return input("Flight number [ENTER to quit] ").strip()
 
@@ -44,7 +44,7 @@ def input_departure_date():
     """
     Prompt for the departure date
 
-    :return: The departure date or None if cancelled
+    :return: The departure date as a date() object or None if cancelled
     """
     while True:
         departure_date_string = input("Departure date DD/MM/YYYY [ENTER to quit] ").strip()
@@ -62,7 +62,7 @@ def input_departure_time():
     """
     Prompt for the departure time
 
-    :return: The departure time or None if cancelled
+    :return: The departure time as a time() object or None if cancelled
     """
     while True:
         departure_time_string = input("Departure time in 24-hour format HH:MM [ENTER to quit] ").strip()
@@ -77,6 +77,11 @@ def input_departure_time():
 
 
 def input_duration():
+    """
+    Prompt for the flight duration
+
+    :return: The flight duration as a timedelta() object or None if cancelled
+    """
     while True:
         duration_string = input("Duration HH:MM [ENTER to quit] ")
         if not duration_string:
@@ -94,11 +99,16 @@ def input_duration():
         print(f"{duration_string} is not a valid duration")
 
 
-def input_aircraft(flight):
+def input_aircraft_seating_plan(flight):
+    """
+    Prompt for and load an aircraft seating plan for a flight
+
+    :param flight: The flight object for which the aircraft seating plan is to be loaded
+    """
     while True:
         aircraft_model_and_layout = input("Aircraft model and layout e.g. A321:NEO [ENTER to quit] ")
         if len(aircraft_model_and_layout) == 0:
-            return
+            break
 
         words = aircraft_model_and_layout.split(":")
         model = words[0].strip()
@@ -106,7 +116,7 @@ def input_aircraft(flight):
 
         try:
             flight.load_seating(model, layout)
-            return
+            break
         except FileNotFoundError:
             print(f"No seating plan found for aircraft model {model} with layout {layout}")
 
