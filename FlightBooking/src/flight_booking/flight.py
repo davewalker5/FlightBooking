@@ -1,7 +1,7 @@
 import json
 import datetime
 import pkg_resources
-from .seating_plan import read_plan, allocate_seat, copy_seat_allocations, get_unallocated_seats, get_allocated_seat
+from .seating_plan import read_plan, allocate_seat, copy_seat_allocations, get_allocated_seat
 from .utils import get_flight_file_path, get_boarding_card_path
 from .airport import get_airport
 import pytz
@@ -51,9 +51,6 @@ class Flight:
         self._duration = duration
         self._passengers = {}
         self._seating = None
-        self._aircraft = None
-        self._layout = None
-        self._capacity = 0
 
     def __repr__(self):
         return f"{type(self).__name__}(" \
@@ -87,19 +84,59 @@ class Flight:
 
     @property
     def embarkation_airport_code(self):
+        """
+        Return the airport code for the embarkation airport
+
+        :return: IATA 3-letter airport code for the point of embarkation
+        """
         return self._embarkation["code"]
 
     @property
     def destination_airport_code(self):
+        """
+        Return the airport code for the destination airport
+
+        :return: IATA 3-letter airport code for the destination airport
+
+        :return:
+        """
         return self._destination["code"]
 
     @property
     def airline(self):
+        """
+        Name of the airline
+
+        :return: The name of the airline
+        """
         return self._airline
 
     @property
     def number(self):
+        """
+        Flight number
+
+        :return: The flight number
+        """
         return self._number
+
+    @property
+    def aircraft(self):
+        """
+        The aircraft model
+
+        :return: The aircraft model or None if a seating plan hasn't been loaded
+        """
+        return self._seating["aircraft"] if self._seating else None
+
+    @property
+    def layout(self):
+        """
+        The seating plan layout for the aircraft
+
+        :return: The aircraft layout or None if a seating plan hasn't been loaded
+        """
+        return self._seating["layout"] if self._seating else None
 
     @property
     def seating_plan(self):
@@ -113,15 +150,30 @@ class Flight:
 
     @property
     def departure_date(self):
+        """
+        The UTC departure date
+
+        :return: The UTC departure date with no time information
+        """
         return self._departs.date()
 
     @property
     def departs_localtime(self):
+        """
+        Return the departure date and time converted to localtime for the point of embarkation
+
+        :return: The departure time converted to localtime for the point of embarkation
+        """
         embarkation_timezone = pytz.timezone(self._embarkation["tz"])
         return self._departs.astimezone(embarkation_timezone)
 
     @property
     def arrives_localtime(self):
+        """
+        The arrival date and time converted to localtime for the destination
+
+        :return: The arrival date and time converted to localtime for the destination
+        """
         arrives_utc = self._departs + self._duration
         destination_timezone = pytz.timezone(self._destination["tz"])
         return arrives_utc.astimezone(destination_timezone)
@@ -142,7 +194,7 @@ class Flight:
 
         :return: Total number of seats on the flight or 0 if a seating plan hasn't been loaded
         """
-        return self._capacity
+        return self._seating["capacity"] if self._seating else 0
 
     @property
     def passengers(self):
@@ -167,9 +219,9 @@ class Flight:
             f"Destination    : {self._destination['code']}",
             f"Departs        : {self.departs_localtime.strftime('%Y-%m-%d %H:%M:00')}",
             f"Duration       : {self._duration}",
-            f"Aircraft       : {self._aircraft}",
-            f"Seating Layout : {self._layout}",
-            f"Capacity       : {self._capacity}"
+            f"Aircraft       : {self.aircraft}",
+            f"Seating Layout : {self.layout}",
+            f"Capacity       : {self.capacity}"
         ]
 
     def load_seating(self, aircraft, layout):
@@ -185,9 +237,6 @@ class Flight:
         # Read the plan and calculate the capacity as the unallocated seat
         # count after initially loading
         to_plan = read_plan(self._airline, aircraft, layout)
-        self._capacity = len(get_unallocated_seats(to_plan))
-        self._aircraft = aircraft
-        self._layout = layout
 
         # Migrate existing seat allocations
         if self._seating is not None:
@@ -239,9 +288,9 @@ class Flight:
             "destination": self._destination["code"],
             "departs": self._departs.strftime(DEPARTURE_DATE_FORMAT),
             "duration": self._duration.seconds,
-            "aircraft": self._aircraft,
-            "layout": self._layout,
-            "capacity": self._capacity
+            "aircraft": self.aircraft,
+            "layout": self.layout,
+            "capacity": self.capacity
         })
 
         # Construct the JSON, reload it and pretty-print it
@@ -260,6 +309,12 @@ class Flight:
             f.write(self.to_json())
 
     def generate_boarding_cards(self, card_format, gate):
+        """
+        Generate boarding cards in the specified format
+
+        :param card_format: The format for the generated card data file
+        :param gate: The gate number the flight will depart from
+        """
         generator = card_generator_map[card_format]
         for passenger_id in self._passengers:
             # Construct the card details for this passenger and generate the card

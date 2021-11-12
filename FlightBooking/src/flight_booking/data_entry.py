@@ -94,6 +94,23 @@ def input_duration():
         print(f"{duration_string} is not a valid duration")
 
 
+def input_aircraft(flight):
+    while True:
+        aircraft_model_and_layout = input("Aircraft model and layout e.g. A321:NEO [ENTER to quit] ")
+        if len(aircraft_model_and_layout) == 0:
+            return
+
+        words = aircraft_model_and_layout.split(":")
+        model = words[0].strip()
+        layout = words[1].strip() if len(words) > 1 else None
+
+        try:
+            flight.load_seating(model, layout)
+            return
+        except FileNotFoundError:
+            print(f"No seating plan found for aircraft model {model} with layout {layout}")
+
+
 def input_flight():
     """
     Prompts for flight details and then constructs a Flight() object from the entered data

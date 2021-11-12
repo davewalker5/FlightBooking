@@ -25,17 +25,29 @@ def read_plan(airline, aircraft, layout=None):
         reader = csv.reader(f)
         next(reader, None)
 
-        # The seating plan is represented as a dictionary where the key is the row number
-        # and the value is a dictionary containing the class and the seats. The seats are
-        # a dictionary where the key is the seat number and the value is the passenger ID,
+        # The seating plan is a dictionary initialised with keys for the airline, aircraft model
+        # and layout to which the plan applies
+        seating_plan = {
+            "airline": airline,
+            "aircraft": aircraft,
+            "layout": layout
+        }
+
+        # The seating plan is then updated with keys holding the details for each row. The key is
+        # the row number and the value is a dictionary containing the class and the seats. The
+        # seats are a dictionary where the key is the seat number and the value is the passenger ID,
         # initialised to None here
-        return {
+        seating_plan.update({
             row[ROW_NUMBER_COLUMN]: {
                 "class": row[CLASS_COLUMN],
                 "seats": {f"{row[ROW_NUMBER_COLUMN]}{seat}": None for seat in row[SEAT_LETTERS_COLUMN]}
             }
             for row in reader
-        }
+        })
+
+        # Now work out the total capacity and store that in the dictionary
+        seating_plan["capacity"] = len(get_unallocated_seats(seating_plan))
+        return seating_plan
 
 
 def get_seating_row(plan, seat_number):
@@ -96,7 +108,7 @@ def get_allocated_seat(plan, passenger_id):
     """
     matches = [
         seat_number
-        for row in plan.keys()
+        for row in plan.keys() if row.isnumeric()
         for seat_number in plan[row]["seats"]
         if plan[row]["seats"][seat_number] == passenger_id
     ]
@@ -114,7 +126,7 @@ def get_unallocated_seats(plan):
     """
     return [
         seat_number
-        for row in plan.keys()
+        for row in plan.keys() if row.isnumeric()
         for seat_number in plan[row]["seats"]
         if plan[row]["seats"][seat_number] is None
     ]
@@ -132,7 +144,7 @@ def copy_seat_allocations(from_plan, to_plan):
     # for allocated seats
     matches = [
         (seat_number, from_plan[row]["seats"][seat_number])
-        for row in from_plan.keys()
+        for row in from_plan.keys() if row.isnumeric()
         for seat_number in from_plan[row]["seats"]
         if from_plan[row]["seats"][seat_number] is not None
     ]
