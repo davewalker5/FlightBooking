@@ -197,6 +197,15 @@ class Flight:
         return self._seating["capacity"] if self._seating else 0
 
     @property
+    def available_capacity(self):
+        """
+        Return the number of unallocated seats available on the flight
+
+        :return: The number of available seats or 0 if a seating plan hasn't been loaded
+        """
+        return len(get_unallocated_seats(self._seating)) if self._seating else 0
+
+    @property
     def passengers(self):
         """
         Return the passenger collection

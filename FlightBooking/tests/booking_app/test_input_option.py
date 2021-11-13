@@ -5,17 +5,21 @@ from src.booking_app.option_handler import input_option, call_option_function
 from src.flight_booking import Flight
 
 
-def dummy_function_1(flight):
-    return None
-
-
-def dummy_function_2(flight):
+def create_flight():
     return Flight("LGW",
                   "RMU",
                   "EasyJet",
                   "U28663",
                   datetime.datetime(2021, 11, 20, 10, 45),
                   datetime.timedelta(hours=2, minutes=25))
+
+
+def dummy_function_1(flight):
+    return None
+
+
+def dummy_function_2(flight):
+    return create_flight()
 
 
 def dummy_function_3():
@@ -23,12 +27,7 @@ def dummy_function_3():
 
 
 def dummy_function_4():
-    return Flight("LGW",
-                  "RMU",
-                  "EasyJet",
-                  "U28663",
-                  datetime.datetime(2021, 11, 20, 10, 45),
-                  datetime.timedelta(hours=2, minutes=25))
+    return create_flight()
 
 
 class TestInputOption(unittest.TestCase):
@@ -62,12 +61,21 @@ class TestInputOption(unittest.TestCase):
             "has_flight_parameter": True,
             "function": dummy_function_2
         }
-        result = call_option_function(option, None)
+        result = call_option_function(option, create_flight())
         self.assertTrue(isinstance(result, Flight))
         self.assertEqual("LGW", result.embarkation_airport_code)
         self.assertEqual("RMU", result.destination_airport_code)
         self.assertEqual("EasyJet", result.airline)
         self.assertEqual("U28663", result.number)
+
+    def test_call_function_with_parameters_requires_valid_flight(self):
+        option = {
+            "description": "Test Option",
+            "has_flight_parameter": True,
+            "function": dummy_function_2
+        }
+        with self.assertRaises(ValueError):
+            _ = call_option_function(option, None)
 
     def test_call_function_with_no_parameters_doesnt_change_flight(self):
         option = {

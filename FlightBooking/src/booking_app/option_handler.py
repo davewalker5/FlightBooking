@@ -68,7 +68,10 @@ def call_option_function(option, flight):
     :return: Either a new flight or the current flight object
     """
     if option["has_flight_parameter"]:
-        result = option["function"](flight=flight)
+        if flight:
+            result = option["function"](flight=flight)
+        else:
+            raise ValueError(f"'{option['description']}' requires a valid flight")
     else:
         result = option["function"]()
 
