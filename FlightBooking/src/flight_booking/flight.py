@@ -1,7 +1,7 @@
 import json
 import datetime
 import pkg_resources
-from .seating_plan import read_plan, allocate_seat, copy_seat_allocations, get_allocated_seat
+from .seating_plan import read_plan, allocate_seat, copy_seat_allocations, get_allocated_seat, get_unallocated_seats
 from .utils import get_flight_file_path, get_boarding_card_path
 from .airport import get_airport
 import pytz
@@ -233,12 +233,11 @@ class Flight:
         :param aircraft: Aircraft model e.g. A320
         :param layout: Airline-specific layout name
         """
-
-        # Read the plan and calculate the capacity as the unallocated seat
-        # count after initially loading
         to_plan = read_plan(self._airline, aircraft, layout)
+        if to_plan["capacity"] < len(self.passengers):
+            # TODO Custom Error
+            raise ValueError(f"{aircraft} layout {layout} does not have enough seats for the current passengers")
 
-        # Migrate existing seat allocations
         if self._seating is not None:
             copy_seat_allocations(self._seating, to_plan)
 
@@ -252,6 +251,17 @@ class Flight:
         """
         if passenger["id"] in self._passengers.keys():
             raise ValueError(f"Passenger {passenger['id']} is already on this flight")
+
+        if self._seating and len(self._passengers) == self.capacity:
+            # TODO Custom Error
+            raise ValueError("The flight is full")
+
+        passport_numbers = [p["passport_number"] for p in self._passengers.values()]
+        number = passenger["passport_number"]
+        if number in passport_numbers:
+            # TODO Custom Error
+            raise ValueError(f"Passenger with passport number {number} is already on this flight")
+
         self._passengers[passenger["id"]] = passenger
 
     def allocate_seat(self, seat_number, passenger_id):
@@ -265,6 +275,16 @@ class Flight:
         if passenger_id not in self._passengers.keys():
             raise ValueError(f"Passenger {passenger_id} is not on this flight")
         allocate_seat(self._seating, seat_number, passenger_id)
+
+    def allocate_next_empty_seat(self, passenger_id):
+        """
+        Allocate the next unallocated seat to the passenger with the specified ID, filling the plane from
+        row by row from front to back
+
+        :param passenger_id: Unique passenger identifier
+        """
+        next_seat = get_unallocated_seats(self._seating)[0]
+        self.allocate_seat(next_seat, passenger_id)
 
     def get_allocated_seat(self, passenger_id):
         """
@@ -365,10 +385,7 @@ class Flight:
             duration=datetime.timedelta(seconds=int(json_data["details"]["duration"]))
         )
 
-        # Assign the seating layout properties, the passenger list and the seating plan
-        flight._aircraft = json_data["details"]["aircraft"]
-        flight._layout = json_data["details"]["layout"]
-        flight._capacity = json_data["details"]["capacity"]
+        # Assign the passenger list and the seating plan
         flight._passengers = json_data["passengers"]
         flight._seating = json_data["seating"]
 
