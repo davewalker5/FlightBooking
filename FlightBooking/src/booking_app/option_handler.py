@@ -1,5 +1,6 @@
 import inspect
 from .data_entry import trimmed_input
+from ..flight_booking.flight import Flight
 
 
 def validate_option_definition(definition):
@@ -71,4 +72,4 @@ def call_option_function(option, flight):
     else:
         result = option["function"]()
 
-    return result if result is not None else flight
+    return result if isinstance(result, Flight) else flight
