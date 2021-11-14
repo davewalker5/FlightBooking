@@ -1,9 +1,54 @@
+"""
+This module contains the definition for the Flight class, instances of which are used to manage all the properties
+of a flight (including the seating plan, passenger details and seat allocations) and to generate boarding card data
+files.
+
+Instances of a Flight can be saved to JSON-formatted data files and subsequently re-created from the data held in
+those files.
+
+BOARDING CARDS:
+
+Plugins are used to generate boarding cards in different formats. Plugins capable of generating boarding cards should
+extend the following entry point:
+
+flight_booking.card_generator_plugins
+
+They should provide the follow:
+
+card_format - the format in which boarding card data is generated e.g. html, pdf, txt
+card_generator - a function that generates and returns boarding card data in the format indicated by the card_format
+
+The card_generator function receives a dictionary of properties, as follows:
+
+gate - departure gate number
+airline - name of the airline
+embarkation_name - the name of the embarkation airport
+embarkation - 3-letter IATA code for the destination airport
+departs - departure time (local) formatted using the 12-hour clock with an am or pm suffix
+destination_name - the name of the destination airport
+destination- 3-letter IATA code for the destination airport
+arrives - arrival time (local) formatted using the 12-hour clock with an am or pm suffix
+name - the passenger name
+seat_number - the seat number
+"""
+
 import json
 import datetime
 import pkg_resources
-from .seating_plan import read_plan, allocate_seat, copy_seat_allocations, get_allocated_seat, get_unallocated_seats
+from .seating_plan import read_plan, \
+    allocate_seat, \
+    copy_seat_allocations, \
+    get_allocated_seat, \
+    get_unallocated_seats, \
+    get_seat_allocations, \
+    clear_allocation
 from .utils import get_flight_file_path, get_boarding_card_path
 from .airport import get_airport
+from .exceptions import InsufficientCapacityError, \
+    FlightIsFullError, \
+    DuplicatePassportNumberError, \
+    InvalidOperationError, \
+    MissingBoardingCardPluginError
 import pytz
 
 DEPARTURE_DATE_FORMAT = "%Y%m%d%H%M"
@@ -203,7 +248,7 @@ class Flight:
 
         :return: The number of available seats or 0 if a seating plan hasn't been loaded
         """
-        return len(get_unallocated_seats(self._seating)) if self._seating else 0
+        return self.capacity - len(self._passengers) if self._seating else 0
 
     @property
     def passengers(self):
@@ -244,8 +289,11 @@ class Flight:
         """
         to_plan = read_plan(self._airline, aircraft, layout)
         if to_plan["capacity"] < len(self.passengers):
-            # TODO Custom Error
-            raise ValueError(f"{aircraft} layout {layout} does not have enough seats for the current passengers")
+            raise InsufficientCapacityError(
+                f"{aircraft} layout {layout} does not have enough seats for the current passengers",
+                aircraft=aircraft,
+                layout=layout
+            )
 
         if self._seating is not None:
             copy_seat_allocations(self._seating, to_plan)
@@ -262,16 +310,29 @@ class Flight:
             raise ValueError(f"Passenger {passenger['id']} is already on this flight")
 
         if self._seating and len(self._passengers) == self.capacity:
-            # TODO Custom Error
-            raise ValueError("The flight is full")
+            raise FlightIsFullError("The flight is full")
 
         passport_numbers = [p["passport_number"] for p in self._passengers.values()]
         number = passenger["passport_number"]
         if number in passport_numbers:
-            # TODO Custom Error
-            raise ValueError(f"Passenger with passport number {number} is already on this flight")
+            raise DuplicatePassportNumberError(
+                f"Passenger with passport number {number} is already on this flight",
+                number=number
+            )
 
         self._passengers[passenger["id"]] = passenger
+
+    def remove_passenger(self, passenger_id):
+        """
+        Remove the passenger with the specified ID from the flight, also removing their seat allocation
+
+        :param passenger_id: Unique identifier for the passenger to remove
+        """
+        if self._seating is not None:
+            seat_number = get_allocated_seat(self._seating, passenger_id)
+            if seat_number is not None:
+                clear_allocation(self._seating, seat_number)
+        del self.passengers[passenger_id]
 
     def allocate_seat(self, seat_number, passenger_id):
         """
@@ -292,6 +353,10 @@ class Flight:
 
         :param passenger_id: Unique passenger identifier
         """
+        if not self._seating:
+            # Empty sequence or None will be falsy
+            raise InvalidOperationError("Cannot allocate the next seat if there is no seating plan")
+
         next_seat = get_unallocated_seats(self._seating)[0]
         self.allocate_seat(next_seat, passenger_id)
 
@@ -302,7 +367,20 @@ class Flight:
         :param passenger_id: Unique passenger ID
         :return: Seat number e.g. 14B
         """
-        return get_allocated_seat(self._seating, passenger_id)
+        return get_allocated_seat(self._seating, passenger_id) if self._seating else None
+
+    def get_all_seat_allocations(self):
+        """
+        Return a sequence representing the seat allocations for all passengers with allocations
+
+        :return: A sequence of (seat-number, passenger) tuples for allocated seats
+        """
+        if self._seating is None or len(self._passengers) == 0:
+            return None
+
+        return [(seat_number, self._passengers[pid])
+                for seat_number, pid
+                in get_seat_allocations(self._seating)]
 
     def to_json(self):
         """
@@ -344,10 +422,21 @@ class Flight:
         :param card_format: The format for the generated card data file
         :param gate: The gate number the flight will depart from
         """
-        generator = card_generator_map[card_format]
-        for passenger_id in self._passengers:
+        allocations = self.get_all_seat_allocations()
+        if not allocations:
+            # An empty sequence or None will be falsy
+            raise InvalidOperationError("Cannot print boarding cards if the flight has no seat allocations")
+
+        try:
+            generator = card_generator_map[card_format]
+        except KeyError as e:
+            raise MissingBoardingCardPluginError(
+                f"Boarding card plugin not registered for format {card_format}",
+                card_format=card_format
+            ) from e
+
+        for seat_number, passenger in allocations:
             # Construct the card details for this passenger and generate the card
-            seat_number = get_allocated_seat(self._seating, passenger_id)
             card_data = generator({
                 "gate": gate,
                 "airline": self._airline,
@@ -357,7 +446,7 @@ class Flight:
                 "destination_name": self._destination["name"],
                 "destination": self._destination["code"],
                 "arrives": self.arrives_localtime.strftime("%I:%M %p"),
-                "name": self._passengers[passenger_id]["name"],
+                "name": passenger["name"],
                 "seat_number": seat_number
             })
 

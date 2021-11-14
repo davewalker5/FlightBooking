@@ -1,5 +1,6 @@
 import unittest
 from .helpers import create_test_flight, create_test_passenger
+from src.flight_booking import DuplicatePassportNumberError
 
 
 class TestFlightPassengers(unittest.TestCase):
@@ -32,5 +33,10 @@ class TestFlightPassengers(unittest.TestCase):
         self._flight.add_passenger(self._passenger)
         passenger = create_test_passenger()
         passenger["passport_number"] = self._passenger["passport_number"]
-        with self.assertRaises(ValueError):
+        with self.assertRaises(DuplicatePassportNumberError):
             self._flight.add_passenger(passenger)
+
+    def test_can_remove_existing_passenger(self):
+        self._flight.add_passenger(self._passenger)
+        self._flight.remove_passenger(self._passenger["id"])
+        self.assertEqual(0, len(self._flight.passengers))

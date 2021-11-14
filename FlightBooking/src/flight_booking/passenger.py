@@ -1,3 +1,9 @@
+"""
+This module contains methods for managing passengers. Each passenger is represented as a dictionary of properties. On
+creation, each passenger is allocated a unique identifier (GUID) that is assigned to their seat in the seating plan
+when the seat is allocated.
+"""
+
 import uuid
 
 

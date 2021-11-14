@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
-from src.booking_app.data_entry import input_passenger
+from src.booking_app.data_entry import input_passenger, select_passenger
+from .helpers import create_test_passenger
 
 
 class TestInputPassenger(unittest.TestCase):
@@ -43,3 +44,21 @@ class TestInputPassenger(unittest.TestCase):
     def test_cancel_on_passport_number(self, _):
         passenger = input_passenger()
         self.assertIsNone(passenger)
+
+    @patch("builtins.input", side_effect=["1"])
+    def test_select_valid_passenger(self, _):
+        passenger = create_test_passenger()
+        selected = select_passenger({passenger["id"]: passenger})
+        self.assertEqual(passenger, selected)
+
+    @patch("builtins.input", side_effect=["0", "2", "1"])
+    def test_select_passenger_prompts_until_valid(self, _):
+        passenger = create_test_passenger()
+        selected = select_passenger({passenger["id"]: passenger})
+        self.assertEqual(passenger, selected)
+
+    @patch("builtins.input", side_effect=[""])
+    def test_empty_input_cancels(self, _):
+        passenger = create_test_passenger()
+        selected = select_passenger({passenger["id"]: passenger})
+        self.assertIsNone(selected)

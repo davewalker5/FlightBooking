@@ -1,3 +1,7 @@
+"""
+This module defines functions used by the console booking application package to read and validate user input
+"""
+
 import datetime
 from ..flight_booking.airport import get_airport
 from ..flight_booking.flight import Flight
@@ -9,9 +13,37 @@ def trimmed_input(prompt):
     """
     Prompt for and return input, stripping leading and trailing whitespace
 
+    :param prompt: Prompt string presented to the user
     :return: Trimmed input
     """
     return input(prompt).strip()
+
+
+def input_integer(prompt, minimum=None, maximum=None):
+    """
+    Prompt for an integer, optionally imposing a valid range on the  value
+
+    :param prompt: Prompt string presented to the user
+    :param minimum: Optional minimum value
+    :param maximum: Optional maximum value
+    :return: Integer selection or None if cancelled
+    """
+    raw_input = trimmed_input(prompt)
+    if len(raw_input) == 0:
+        return None
+
+    try:
+        number = int(raw_input)
+    except ValueError as e:
+        raise ValueError(f"{raw_input} is not a valid integer") from e
+
+    if minimum and number < int(minimum):
+        raise ValueError(f"{raw_input} is not in the range {minimum} to {maximum}")
+
+    if maximum and number > maximum:
+        raise ValueError(f"{raw_input} is not in the range {minimum} to {maximum}")
+
+    return number
 
 
 def input_date(date_type, minimum=None, maximum=None):
@@ -151,7 +183,7 @@ def input_aircraft_seating_plan(flight):
 
     :param flight: The flight object for which the aircraft seating plan is to be loaded
     """
-    aircraft_model_and_layout = trimmed_input("Aircraft model and layout e.g. A321:NEO [ENTER to quit] ")
+    aircraft_model_and_layout = trimmed_input("Aircraft model and (optional) layout e.g. A321:NEO [ENTER to quit] ")
     if len(aircraft_model_and_layout) == 0:
         return None
 
@@ -242,3 +274,32 @@ def input_passenger():
         return
 
     return create_passenger(name, gender, dob, nationality, residency, passport_number)
+
+
+def list_passengers(passengers):
+    """
+    List passenger details, associating an integer passenger number with each one
+
+    :param passengers: Sequence of passengers to list
+    """
+    i = 0
+    for passenger in passengers.values():
+        i += 1
+        print(f"{str(i).rjust(4)} - {passenger['name']} - {passenger['passport_number']}")
+
+
+def select_passenger(passengers):
+    """
+    Prompt for a passenger number until that number is correct or the user's cancelled input
+
+    :param passengers: Collection of passengers to list
+    :return: Passenger number or None if cancelled
+    """
+    list_passengers(passengers)
+    print()
+    while True:
+        try:
+            number = input_integer("Passenger number [ENTER to quit] ", minimum=1, maximum=len(passengers))
+            return passengers[list(passengers.keys())[number - 1]] if number else None
+        except ValueError as e:
+            print(e)

@@ -1,3 +1,8 @@
+"""
+This module contains methods for validating options for the console booking application package, selecting an option
+and invoking the handler for the selected option
+"""
+
 import inspect
 from .data_entry import trimmed_input
 from ..flight_booking.flight import Flight
@@ -42,8 +47,9 @@ def display_options(options_map):
     """
     Display the available booking application options
     """
+    max_option_length = max([len(k) for k in options_map.keys()])
     for option in options_map:
-        print(f"{option} - {options_map[option]['description']}")
+        print(f"{option.rjust(max_option_length)} - {options_map[option]['description']}")
 
 
 def input_option(options_map):

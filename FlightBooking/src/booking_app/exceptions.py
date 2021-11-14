@@ -1,3 +1,8 @@
+"""
+This module defines custom exceptions used by the console booking application package
+"""
+
+
 class InvalidAirportCodeError(Exception):
     def __init__(self, message, code):
         super().__init__(message)

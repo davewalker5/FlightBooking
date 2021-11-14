@@ -1,6 +1,6 @@
 import unittest
 import datetime
-from src.flight_booking import *
+from src.flight_booking import create_passenger
 
 
 class TestPassenger(unittest.TestCase):

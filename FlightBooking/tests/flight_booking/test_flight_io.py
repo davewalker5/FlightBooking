@@ -4,13 +4,17 @@ import datetime
 import json
 from src.flight_booking import Flight
 from src.flight_booking.utils import get_flight_file_path
-from .helpers import create_test_flight, create_test_passenger
+from .helpers import create_test_flight, create_test_passenger, remove_files
 
 
 class TestFlightSaveAndLoad(unittest.TestCase):
     def setUp(self) -> None:
         self._flight = create_test_flight()
         self._passenger = create_test_passenger()
+
+    def tearDown(self) -> None:
+        # Clear down the flights data folder after the tests have run
+        remove_files("flights")
 
     def test_can_save_flight(self):
         file_path = get_flight_file_path(self._flight.number, self._flight.departure_date)

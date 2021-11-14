@@ -1,5 +1,6 @@
 import unittest
 from .helpers import create_test_flight, create_test_passenger, fill_test_flight
+from src.flight_booking import FlightIsFullError, InsufficientCapacityError
 
 
 class TestFlightSeatingPlan(unittest.TestCase):
@@ -52,7 +53,7 @@ class TestFlightSeatingPlan(unittest.TestCase):
     def test_cannot_add_passenger_to_a_full_flight(self):
         self._flight.load_seating("A321", "neo")
         fill_test_flight(self._flight)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(FlightIsFullError):
             passenger = create_test_passenger()
             self._flight.add_passenger(passenger)
 
@@ -96,5 +97,22 @@ class TestFlightSeatingPlan(unittest.TestCase):
         self._flight.load_seating("A321", "neo")
         fill_test_flight(self._flight)
         self.assertEqual(0, self._flight.available_capacity)
-        with self.assertRaises(ValueError):
+        with self.assertRaises(InsufficientCapacityError):
             self._flight.load_seating("A320", "1")
+
+    def test_allocated_seat_is_none_if_no_seating_plan(self):
+        self._flight.add_passenger(self._passenger)
+        self.assertIsNone(self._flight.get_allocated_seat(self._passenger["id"]))
+
+    def test_allocated_seat_is_none_if_no_seat_allocation(self):
+        self._flight.load_seating("A321", "neo")
+        self._flight.add_passenger(self._passenger)
+        self.assertIsNone(self._flight.get_allocated_seat(self._passenger["id"]))
+
+    def test_removing_passenger_removes_seat_allocation(self):
+        self._flight.load_seating("A321", "neo")
+        self._flight.add_passenger(self._passenger)
+        self._flight.allocate_seat("1A", self._passenger["id"])
+        self._flight.remove_passenger(self._passenger["id"])
+        allocations = self._flight.get_all_seat_allocations()
+        self.assertIsNone(allocations)

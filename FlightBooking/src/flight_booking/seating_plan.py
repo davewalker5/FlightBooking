@@ -1,3 +1,31 @@
+"""
+This module contains methods for managing an aircraft seating plan. Seating plans are dependent on the aircraft
+type and an optional airline-specific aircraft layout. The seating plan is not implemented as a class. Rather, it's
+implemented using standard Python types as an exercise in using those types to represent a data structure.
+
+A seating is a dictionary initialised with keys for the airline, aircraft model and layout to which the plan applies.
+It also contains one key per row, where the key is the row number and the associated value is a row object, which is
+also a dictionary
+
+The row object contains a "class" key, which is the seating class, and a "seat" key, with an associated dictionary
+of seat objects.
+
+The seat object is a dictionary in which the key is the seat number and the value is None for an unallocated seat or
+a unique passenger ID for an allocated seat.
+
+Available seating plans are read from CSV-formatted data files with a single row of column headers followed by one
+row per aircraft row, each with the following columns:
+
+Row - the row number
+Class - the seating class for the row e.g. Economy, Business
+Seats - a string of seat letters for each seat in the row
+
+For example, if row number 28 of a seating plan contains 6 economy class seats with the letters A-F, the corresponding
+CSV row would be:
+
+28,Economy,ABCDEF
+"""
+
 import csv
 from .utils import get_seating_file_path
 
@@ -98,6 +126,17 @@ def allocate_seat(plan, seat_number, passenger_id):
     row["seats"][seat_number] = passenger_id
 
 
+def clear_allocation(plan, seat_number):
+    """
+    Clear the seat allocation for the specified seat in the specified plan
+
+    :param plan: Seating plan
+    :param seat_number: The seat number e.g. 3A
+    """
+    row = get_seating_row(plan, seat_number)
+    row["seats"][seat_number] = None
+
+
 def get_allocated_seat(plan, passenger_id):
     """
     Return the seat number allocated to the passenger
@@ -121,8 +160,8 @@ def get_unallocated_seats(plan):
     """
     Return a collection of unallocated seats
 
-    :param plan:
-    :return:
+    :param plan: The seating plan for which to return the seats
+    :return: A list of unallocated seat numbers
     """
     return [
         seat_number
@@ -130,6 +169,33 @@ def get_unallocated_seats(plan):
         for seat_number in plan[row]["seats"]
         if plan[row]["seats"][seat_number] is None
     ]
+
+
+def get_seat_allocations(plan):
+    """
+    Return the seat allocations  for the specified plan
+
+    :param plan: Seating plan
+    :return: A list of (seat number, passenger ID) tuples for allocated seats
+    """
+    return [
+        (seat_number, plan[row]["seats"][seat_number])
+        for row in plan.keys() if row.isnumeric()
+        for seat_number in plan[row]["seats"]
+        if plan[row]["seats"][seat_number] is not None
+    ]
+
+
+def get_passengers_with_no_seat(plan, passenger_ids):
+    """
+    Return a list of passenger IDs that have no seat allocated in the specified plan
+
+    :param plan: Seating plan
+    :param passenger_ids: List of passenger IDs to check
+    :return: List of passenger IDs with no seat allocation in the plan
+    """
+    passenger_ids_with_seats = [pid for _, pid in get_seat_allocations(plan)]
+    return [pid for pid in passenger_ids if pid not in passenger_ids_with_seats]
 
 
 def copy_seat_allocations(from_plan, to_plan):
@@ -140,15 +206,7 @@ def copy_seat_allocations(from_plan, to_plan):
     :param to_plan: Plan to migrate allocations to
     """
 
-    # This returns a list of tuples containing seat numbers and passenger ids
-    # for allocated seats
-    matches = [
-        (seat_number, from_plan[row]["seats"][seat_number])
-        for row in from_plan.keys() if row.isnumeric()
-        for seat_number in from_plan[row]["seats"]
-        if from_plan[row]["seats"][seat_number] is not None
-    ]
-
+    matches = get_seat_allocations(from_plan)
     if len(matches) > 0:
         # First pass tries to put passengers in the same seats, on the basis that
         # any seating swap is likely to be to a roughly equivalent layout rather

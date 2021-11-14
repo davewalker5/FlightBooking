@@ -1,55 +1,14 @@
 flight_booking
 ==============
-A tutorial/demonstration project implementing a Python package for creating and managing airline flight bookings and
+A tutorial/demonstration package implementing a Python package for creating and managing airline flight bookings and
 passengers.
 
-The project was inspired by an example in the "Core Python : Getting Started" PluralSight course by Austin Bingham and
-Robert Smallshire.
+It was inspired by an example in the "Core Python : Getting Started" PluralSight course by Austin Bingham and Robert
+Smallshire and is intended as a practice project for the techniques contained in the PluralSight "Core Python" path.
 
 Example
 -------
-The following example shows how to:
-
-    - Create a flight
-    - Add a passenger to the flight
-    - Allocate a seat to the passenger
-    - Save the flight data for later retrieval
-    - Reload the saved flight data
-
-The project also contains an "example.py" alongside the source code that runs a similar example.
-
-::
-
-    import datetime
-    from flight_booking import *
-
-    # Create a flight
-    flight = Flight(
-        airline="EasyJet",
-        number="U25142",
-        embarkation="ALC",
-        destination="LGW",
-        departs=datetime.datetime(2021, 10, 18, 21, 45, 0),
-        duration=datetime.timedelta(hours=2, minutes=15)
-    )
-
-    # Load the seating plan for the aircraft
-    flight.load_seating("A320", "1")
-
-    # Create a passenger and add them to the flight and allocate a seat
-    passenger = create_passenger(
-        "Some Passenger",
-        "M",
-        datetime.datetime(1980, 1, 1),
-        "United Kingdom",
-        "United Kingdom",
-        "123456789")
-    flight.add_passenger(passenger)
-    flight.allocate_seat("2A", passenger["id"])
-
-    # Save and reload the flight
-    flight.save()
-    loaded = Flight.load_flight("U25142", datetime.datetime(2021, 10, 18, 21, 45, 0))
+The "booking_app" package implements a simple text-based example that exercises the "flight_booking" package.
 
 Unit Tests and Coverage
 -----------------------
@@ -65,7 +24,7 @@ This will  create a folder "cov_html" containing the coverage report in HTML for
 
 Dependencies
 ------------
-The core flight booking application has no external dependencies but one or more of the boarding card generators are
+The core flight booking package has no external dependencies but one or more of the boarding card generators are
 required to generate and save boarding cards and they introduce their own dependencies. See the requirements.txt files
 for the generator plugins for dependencies. Also, "coverage" should be installed to run the code coverage report.
 

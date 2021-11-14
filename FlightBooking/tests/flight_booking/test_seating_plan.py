@@ -25,6 +25,9 @@ class TestSeatingPlan(TestCase):
         allocate_seat(self._a320, "5D", "id")
         self.assertEqual("5D", get_allocated_seat(self._a320, "id"))
 
+    def test_allocated_seat_is_none_if_not_allocated(self):
+        self.assertIsNone(get_allocated_seat(self._a320, "id"))
+
     def test_allocate_seat(self):
         self.assertIsNone(get_allocated_seat(self._a320, "id"))
         allocate_seat(self._a320, "5D", "id")
@@ -58,3 +61,14 @@ class TestSeatingPlan(TestCase):
         self.assertEqual("28A", get_allocated_seat(self._a320, "id"))
         copy_seat_allocations(self._a320, self._a321)
         self.assertEqual("1A", get_allocated_seat(self._a321, "id"))
+
+    def test_get_passengers_with_no_seat(self):
+        allocate_seat(self._a320, "1A", "id-1")
+        ids_with_no_allocation = get_passengers_with_no_seat(self._a320, {"id-1", "id-2"})
+        self.assertEqual(1, len(ids_with_no_allocation))
+        self.assertTrue("id-2" in ids_with_no_allocation)
+
+    def test_can_clear_allocation(self):
+        allocate_seat(self._a320, "1A", "id-1")
+        clear_allocation(self._a320, "1A")
+        self.assertIsNone(get_allocated_seat(self._a320, "id"))

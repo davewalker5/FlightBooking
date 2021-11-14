@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch
 import datetime
 from src.flight_booking.utils import get_boarding_card_path
+from src.flight_booking import InvalidOperationError, MissingBoardingCardPluginError
 from .helpers import create_test_flight, create_test_passenger
 
 
@@ -76,3 +77,28 @@ class TestFlightBoardingCards(unittest.TestCase):
         self.assertIn("RMU", contents)
         self.assertIn("02:20 PM", contents)
         self.assertIn("Some Passenger", contents)
+
+    @patch("src.flight_booking.flight.card_generator_map", {"txt": card_generator})
+    def test_cannot_generate_boarding_cards_with_no_seating_plan(self):
+        with self.assertRaises(InvalidOperationError):
+            self._flight.generate_boarding_cards("txt", "2A")
+
+    @patch("src.flight_booking.flight.card_generator_map", {"txt": card_generator})
+    def test_cannot_generate_boarding_cards_with_no_passengers(self):
+        self._flight.load_seating("A321", "neo")
+        with self.assertRaises(InvalidOperationError):
+            self._flight.generate_boarding_cards("txt", "2A")
+
+    @patch("src.flight_booking.flight.card_generator_map", {"txt": card_generator})
+    def test_cannot_generate_boarding_cards_with_no_seat_allocations(self):
+        self._flight.load_seating("A321", "neo")
+        self._flight.add_passenger(self._passenger)
+        with self.assertRaises(InvalidOperationError):
+            self._flight.generate_boarding_cards("txt", "2A")
+
+    def test_cannot_generate_boarding_cards_when_plugin_is_missing(self):
+        self._flight.load_seating("A321", "neo")
+        self._flight.add_passenger(self._passenger)
+        self._flight.allocate_seat("5D", self._passenger["id"])
+        with self.assertRaises(MissingBoardingCardPluginError):
+            self._flight.generate_boarding_cards("missing-format", "28A")

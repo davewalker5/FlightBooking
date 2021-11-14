@@ -1,3 +1,9 @@
+"""
+This module provides supporting functions for determining and returning locations for reference and output files.
+By default, those files are held in separate sub-folders under the "data" folder of the project itself. An
+environment variable can be used to override the default location.
+"""
+
 import os
 import re
 
