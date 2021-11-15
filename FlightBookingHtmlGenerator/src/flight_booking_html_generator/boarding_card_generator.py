@@ -1,3 +1,8 @@
+"""
+This module implements a boarding card generator plugin that can generates and returns boarding card contents in
+HTML format using the boarding card template in the “templates” data folder.
+"""
+
 import os
 
 card_format = "html"

@@ -56,6 +56,7 @@ def input_option(options_map):
     """
     Prompt for and return an option from the options map
 
+    :raises ValueError: If the option entered by the user is not available
     :return: The option as a dictionary containing the method to call to act on the selected option
     """
     selection = trimmed_input("Option: ").upper()
@@ -71,6 +72,7 @@ def call_option_function(option, flight):
 
     :param option: Option definiton (dictionary)
     :param flight: Current flight object
+    :raises ValueError: If the callback function requires a flight object and the passed instance is None
     :return: Either a new flight or the current flight object
     """
     if option["has_flight_parameter"]:
@@ -81,4 +83,5 @@ def call_option_function(option, flight):
     else:
         result = option["function"]()
 
-    return result if isinstance(result, Flight) else flight
+    # In the context of the unit tests, isinstance() fails so just compare the type name
+    return result if type(result).__name__ == "Flight" else flight

@@ -1,8 +1,6 @@
 import unittest
-import datetime
 import os
 from unittest.mock import patch
-from src.flight_booking import Flight
 from src.booking_app.option_callbacks import add_passenger_to_flight, \
     save_flight, \
     load_flight, \
@@ -11,6 +9,7 @@ from src.booking_app.option_callbacks import add_passenger_to_flight, \
     print_boarding_cards
 from tests.helpers import get_flight_data_file_path, \
     delete_flight_data_file, \
+    create_test_flight, \
     create_test_passenger, \
     binary_card_generator, \
     remove_files, \
@@ -19,18 +18,10 @@ from tests.helpers import get_flight_data_file_path, \
 
 class TestOptionCallbacks(unittest.TestCase):
     def setUp(self) -> None:
-        self._flight = Flight(
-                airline="EasyJet",
-                number="U28549",
-                embarkation="LGW",
-                destination="RMU",
-                departs=datetime.datetime(2021, 11, 20, 10, 45, 0),
-                duration=datetime.timedelta(hours=2, minutes=35)
-            )
-
+        self._flight = create_test_flight()
         self._passenger = create_test_passenger()
 
-    @patch("src.flight_booking.airport.airport_codes",
+    @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"},
             "RMU": {"code": "RMU", "name": "Murcia International Airport", "tz": "Europe/Madrid"}})
     @patch("builtins.input", side_effect=["Some Passenger", "M", "01/02/1970", "England", "UK", "1234567890"])
@@ -38,7 +29,7 @@ class TestOptionCallbacks(unittest.TestCase):
         add_passenger_to_flight(self._flight)
         self.assertEqual(1, len(self._flight.passengers))
 
-    @patch("src.flight_booking.airport.airport_codes",
+    @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"},
             "RMU": {"code": "RMU", "name": "Murcia International Airport", "tz": "Europe/Madrid"}})
     @patch("builtins.input", side_effect=[""])
@@ -51,7 +42,7 @@ class TestOptionCallbacks(unittest.TestCase):
         save_flight(self._flight)
         self.assertTrue(os.path.exists(get_flight_data_file_path(self._flight)))
 
-    @patch("src.flight_booking.airport.airport_codes",
+    @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"},
             "RMU": {"code": "RMU", "name": "Murcia International Airport", "tz": "Europe/Madrid"}})
     @patch("builtins.input", side_effect=["U28549", "20/11/2021"])
@@ -111,7 +102,7 @@ class TestOptionCallbacks(unittest.TestCase):
         remove_passenger(self._flight)
         self.assertEqual(1, len(self._flight.passengers))
 
-    @patch("src.flight_booking.flight.card_generator_map", {"pdf": binary_card_generator})
+    @patch("flight_booking.flight.card_generator_map", {"pdf": binary_card_generator})
     @patch("builtins.input", side_effect=["28A"])
     def test_can_generate_boarding_cards(self, _):
         self._flight.load_seating("A321", "neo")

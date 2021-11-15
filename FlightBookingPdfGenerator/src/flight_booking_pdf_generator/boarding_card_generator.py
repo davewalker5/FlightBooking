@@ -1,3 +1,10 @@
+"""
+This module implements a boarding card generator plugin that can generates and returns boarding card contents in
+PDF format.
+
+The "templates" data folder contains a boarding card template in HTML format. Boarding card data is first generated
+in HTML format and then converted to PDF format to be returned to the caller
+"""
 import os
 import pdfkit
 

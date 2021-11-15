@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.abspath('../../src'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'flight_booking'
+project = 'HTML Booking Card Generator Plugin'
 copyright = '2021, Dave Walker'
 author = 'Dave Walker'
 

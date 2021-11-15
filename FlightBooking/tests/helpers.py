@@ -6,7 +6,7 @@ import datetime
 import os
 import shutil
 from random import randint
-from src.flight_booking import *
+from src.flight_booking import Flight, create_passenger
 from src.flight_booking.utils import get_data_folder, get_flight_file_path, get_boarding_card_path
 
 base_passport_number = randint(1, 100000)

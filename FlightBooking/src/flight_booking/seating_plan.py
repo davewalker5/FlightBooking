@@ -16,9 +16,13 @@ a unique passenger ID for an allocated seat.
 Available seating plans are read from CSV-formatted data files with a single row of column headers followed by one
 row per aircraft row, each with the following columns:
 
-Row - the row number
-Class - the seating class for the row e.g. Economy, Business
-Seats - a string of seat letters for each seat in the row
++-------+------------------------------------------------------+
+| Row   | The row number                                       |
++-------+------------------------------------------------------+
+| Class | The seating class for the row e.g. Economy, Business |
++-------+------------------------------------------------------+
+| Seats | A string of seat letters for each seat in the row    |
++-------+------------------------------------------------------+
 
 For example, if row number 28 of a seating plan contains 6 economy class seats with the letters A-F, the corresponding
 CSV row would be:
@@ -85,6 +89,7 @@ def get_seating_row(plan, seat_number):
 
     :param plan: Seating plan
     :param seat_number: Seat number e.g. 3A
+    :raises ValueError: If the row and/or seat number don't exist in the seating plan
     :return: The row as a dictionary containing seat class and seats keys
     """
     row_number = seat_number[:-1]
@@ -105,10 +110,11 @@ def allocate_seat(plan, seat_number, passenger_id):
 
     :param plan: Seating plan
     :param seat_number: The seat number e.g. 3A
+    :raises ValueError: If the seating plan is None or the seat is already allocated to another passenger
     :param passenger_id: The unique identifying data for a passenger
     """
     if plan is None:
-        raise ValueError("Seating plan has not been loaded")
+        raise ValueError("Seating plan is None")
 
     # Check the seat isn't already allocated
     row = get_seating_row(plan, seat_number)
@@ -222,9 +228,9 @@ def copy_seat_allocations(from_plan, to_plan):
         # Second pass now uses a local function to put unallocated passengers
         # in unallocated seats and then calls it using map, passing the lists
         # of un-allocated seats and passengers
-        def allocate_unallocated_passenger(seat_number, unallocated_passenger_id):
+        def allocate_unallocated_passenger(number, unallocated_passenger_id):
             try:
-                allocate_seat(to_plan, seat_number, unallocated_passenger_id)
+                allocate_seat(to_plan, number, unallocated_passenger_id)
                 return None
             except ValueError:
                 # If we can't allocate a seat, return the passenger ID

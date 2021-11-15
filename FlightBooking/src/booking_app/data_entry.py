@@ -26,6 +26,7 @@ def input_integer(prompt, minimum=None, maximum=None):
     :param prompt: Prompt string presented to the user
     :param minimum: Optional minimum value
     :param maximum: Optional maximum value
+    :raises ValueError: If the input is not a valid integer or is out of range
     :return: Integer selection or None if cancelled
     """
     raw_input = trimmed_input(prompt)
@@ -53,6 +54,7 @@ def input_date(date_type, minimum=None, maximum=None):
     :param date_type: Date type, used in the prompt
     :param minimum: Minimum acceptable date or None if there is no minimum
     :param maximum: Maximum acceptable date or None if there is no maximum
+    :raises ValueError: If the input is not a valid date in the specified format or the date is out of range
     :return: The date as a date() object or None if cancelled
     """
     date_string = trimmed_input(f"{date_type} DD/MM/YYYY [ENTER to quit] ")
@@ -99,6 +101,7 @@ def input_airport_code(airport_type):
     Prompt for an airport code and return the corresponding airport object
 
     :param airport_type: Text used in the prompt to indicate embarkation or destination airport
+    :raises InvalidAirportCodeError: If the input is not a recognised IATA airport code
     :return: A dictionary of airport properties or None if cancelled
     """
     code = trimmed_input(f"{airport_type} airport code [ENTER to quit] ")
@@ -117,6 +120,7 @@ def input_departure_time():
     """
     Prompt for the departure time
 
+    :raises ValueError: If the input is not a valid time
     :return: The departure time as a time() object or None if cancelled
     """
     departure_time_string = trimmed_input("Departure time in 24-hour format HH:MM [ENTER to quit] ")
@@ -136,6 +140,7 @@ def input_duration():
     Prompt for the flight duration expressed as HH:MM, where the hours are >= 0
     and the minutes are between 0 and 59
 
+    :raises ValueError: If the input is malformed or its components do not result in a valid flight time
     :return: The flight duration as a timedelta() object or None if cancelled
     """
     duration_string = trimmed_input("Duration HH:MM [ENTER to quit] ")
@@ -165,6 +170,7 @@ def input_gender():
     """
     Prompt for and return a passenger's gender
 
+    :raises ValueError: If the input is not a valid gender
     :return: Gender, M or F or None if cancelled
     """
     gender = trimmed_input("Gender M/F [ENTER to quit] ").upper()
@@ -182,6 +188,7 @@ def input_aircraft_seating_plan(flight):
     Prompt for and load an aircraft seating plan for a flight
 
     :param flight: The flight object for which the aircraft seating plan is to be loaded
+    :raises InvalidAircraftSeatingPlanError: If the input is malformed or the seating plan file is not found
     """
     aircraft_model_and_layout = trimmed_input("Aircraft model and (optional) layout e.g. A321:NEO [ENTER to quit] ")
     if len(aircraft_model_and_layout) == 0:

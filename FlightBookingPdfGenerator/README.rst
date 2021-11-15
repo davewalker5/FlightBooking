@@ -12,7 +12,8 @@ The aircraft image used in the boarding card is from ClipartMax, with some modif
 https://www.clipartmax.com/middle/m2H7H7m2m2d3H7H7_herbivorous-clipart-airplane-airplane-outline-png/
 
 Overview
---------
+========
+
 The flight.py module of the flight_booking project discovers plugins extending the following entry point:
 
 ::
@@ -30,14 +31,26 @@ Plugins are expected to provide the following symbols:
 +----------------+------------------------------------------------------------------------------------------------------------+
 
 Dependencies
-------------
+============
+
 The PDF boarding card generator has dependencies listed in requirements.txt and also requires an installation of
 wkhtmltopdf:
 
 https://wkhtmltopdf.org
 
+Unit Tests
+==========
+
+Unit tests can either be run in PyCharm or can be run from the command line, at the root of the project folder, as
+follows:
+
+::
+
+    python -m pytest
+
 License
--------
+=======
+
 This software is licensed under the MIT License:
 
 https://opensource.org/licenses/MIT

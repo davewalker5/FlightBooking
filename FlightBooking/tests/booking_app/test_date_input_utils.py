@@ -7,7 +7,7 @@ from src.booking_app.data_entry import input_date, input_past_date, input_future
 class TestInputUtils(unittest.TestCase):
     @patch("builtins.input", side_effect=[datetime.datetime.now().strftime("%d/%m/%Y")])
     def test_now_is_a_valid_date(self, _):
-        # This is potentially vulnerable to failure if the test starts at midnight and we're now in
+        # This is potentially vulnerable to failure if the tests starts at midnight and we're now in
         # the next day ... choosing to treat this as an unlikely edge case
         now = datetime.datetime.now().date()
         d = input_date("")
@@ -52,7 +52,7 @@ class TestInputUtils(unittest.TestCase):
 
     @patch("builtins.input", side_effect=[datetime.datetime.now().strftime("%d/%m/%Y")])
     def test_now_is_not_a_valid_past_date(self, _):
-        # This is potentially vulnerable to failure if the test starts at midnight and we're now in
+        # This is potentially vulnerable to failure if the tests starts at midnight and we're now in
         # the next day ... choosing to treat this as an unlikely edge case
         with self.assertRaises(ValueError):
             _ = input_past_date("")
@@ -72,7 +72,7 @@ class TestInputUtils(unittest.TestCase):
 
     @patch("builtins.input", side_effect=[datetime.datetime.now().strftime("%d/%m/%Y")])
     def test_now_is_not_a_valid_future_date(self, _):
-        # This is potentially vulnerable to failure if the test starts at midnight and we're now in
+        # This is potentially vulnerable to failure if the tests starts at midnight and we're now in
         # the next day ... choosing to treat this as an unlikely edge case
         with self.assertRaises(ValueError):
             _ = input_future_date("")

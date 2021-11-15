@@ -5,14 +5,14 @@ from src.booking_app.exceptions import InvalidAirportCodeError
 
 
 class TestInputAirport(unittest.TestCase):
-    @patch("src.flight_booking.airport.airport_codes",
+    @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"}})
     @patch("builtins.input", side_effect=["LGW"])
     def test_input_valid_airport_code(self, _):
         airport = input_airport_code("Embarkation")
         self.assertEqual("LGW", airport["code"])
 
-    @patch("src.flight_booking.airport.airport_codes",
+    @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"}})
     @patch("builtins.input", side_effect=["LHR"])
     def test_input_invalid_airport_code_errors(self, _):
@@ -24,7 +24,7 @@ class TestInputAirport(unittest.TestCase):
         airport = input_airport_code("Embarkation")
         self.assertIsNone(airport)
 
-    @patch("src.flight_booking.airport.airport_codes",
+    @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"}})
     @patch("builtins.input", side_effect=["  LGW  "])
     def test_leading_trailing_whitespace_is_ignored(self, _):

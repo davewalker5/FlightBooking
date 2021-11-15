@@ -6,31 +6,47 @@ files.
 Instances of a Flight can be saved to JSON-formatted data files and subsequently re-created from the data held in
 those files.
 
-BOARDING CARDS:
+Boarding Card Plugins
+=====================
 
 Plugins are used to generate boarding cards in different formats. Plugins capable of generating boarding cards should
 extend the following entry point:
 
-flight_booking.card_generator_plugins
+::
 
-They should provide the following:
+    flight_booking.card_generator_plugins
 
-card_format - the format in which boarding card data is generated e.g. html, pdf, txt
+They should expose the following symbols:
 
-card_generator - a function that generates and returns boarding card data in the format indicated by the card_format
++----------------+---------------------------------------------------------------------------------------------------+
+| card_format    | String containing the format in which boarding card data is generated e.g. html, pdf, txt         |
++----------------+---------------------------------------------------------------------------------------------------+
+| card_generator | Function that generates and returns boarding card data in the format indicated by the card_format |
++----------------+---------------------------------------------------------------------------------------------------+
 
 The card_generator function receives a dictionary of properties, as follows:
 
-gate - departure gate number
-airline - name of the airline
-embarkation_name - the name of the embarkation airport
-embarkation - 3-letter IATA code for the destination airport
-departs - departure time (local) formatted using the 12-hour clock with an am or pm suffix
-destination_name - the name of the destination airport
-destination- 3-letter IATA code for the destination airport
-arrives - arrival time (local) formatted using the 12-hour clock with an am or pm suffix
-name - the passenger name
-seat_number - the seat number
++------------------+----------------------------------------------------------------------------------+
+| gate             | The departure gate number                                                        |
++------------------+----------------------------------------------------------------------------------+
+| airline          | The name of the airline                                                          |
++------------------+----------------------------------------------------------------------------------+
+| embarkation_name | The name of the embarkation airport                                              |
++------------------+----------------------------------------------------------------------------------+
+| embarkation      | 3-letter IATA code for the destination airport                                   |
++------------------+----------------------------------------------------------------------------------+
+| departs          | Departure time (local) formatted using the 12-hour clock with an am or pm suffix |
++------------------+----------------------------------------------------------------------------------+
+| destination_name | The name of the destination airport                                              |
++------------------+----------------------------------------------------------------------------------+
+| destination      | 3-letter IATA code for the destination airport                                   |
++------------------+----------------------------------------------------------------------------------+
+| arrives          | Arrival time (local) formatted using the 12-hour clock with an am or pm suffix   |
++------------------+----------------------------------------------------------------------------------+
+| name             | The passenger name                                                               |
++------------------+----------------------------------------------------------------------------------+
+| seat_number      | The seat number                                                                  |
++------------------+----------------------------------------------------------------------------------+
 """
 
 import json
@@ -287,6 +303,7 @@ class Flight:
 
         :param aircraft: Aircraft model e.g. A320
         :param layout: Airline-specific layout name
+        :raises InsufficientCapacityError: If the selected plan doesn't have capacity for all the passengers
         """
         to_plan = read_plan(self._airline, aircraft, layout)
         if to_plan["capacity"] < len(self.passengers):
@@ -306,6 +323,9 @@ class Flight:
         Add a passenger to the flight
 
         :param passenger:
+        :raises ValueError: If the passenger is already associated with the flight
+        :raises FlightIsFullError: If the flight is already full
+        :raises DuplicatePassportNumberError: If the passenger's passport number is a duplicate
         """
         if passenger["id"] in self._passengers.keys():
             raise ValueError(f"Passenger {passenger['id']} is already on this flight")
@@ -342,6 +362,7 @@ class Flight:
 
         :param seat_number: Seat number e.g. 3A
         :param passenger_id: Unique passenger identifier
+        :raises ValueError: If the passenger is not associated with the flight
         """
         if passenger_id not in self._passengers.keys():
             raise ValueError(f"Passenger {passenger_id} is not on this flight")
@@ -353,6 +374,7 @@ class Flight:
         row by row from front to back
 
         :param passenger_id: Unique passenger identifier
+        :raises InvalidOperationError: If a seating plan has not been loaded
         """
         if not self._seating:
             # Empty sequence or None will be falsy
@@ -422,6 +444,8 @@ class Flight:
 
         :param card_format: The format for the generated card data file
         :param gate: The gate number the flight will depart from
+        :raises InvalidOperationError: If a seating plan has not been loaded
+        :raises MissingBoardingCardPluginError: If there is no plugin available for the requested format
         """
         allocations = self.get_all_seat_allocations()
         if not allocations:

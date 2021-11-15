@@ -1,7 +1,6 @@
 import unittest
-import datetime
 from unittest.mock import patch
-from src.flight_booking.flight import Flight
+from tests.helpers import create_test_flight
 from src.booking_app.data_entry import input_aircraft_seating_plan
 from src.booking_app.exceptions import InvalidAircraftSeatingPlanError
 
@@ -12,12 +11,7 @@ class TestInputSeatingPlan(unittest.TestCase):
     rely on the seating plan files being present in the appropriate data subfolder
     """
     def setUp(self) -> None:
-        self._flight = Flight("LGW",
-                              "RMU",
-                              "EasyJet",
-                              "EZY8549",
-                              datetime.datetime(2021, 11, 20, 10, 15),
-                              datetime.timedelta(hours=2, minutes=25))
+        self._flight = create_test_flight()
 
     @patch("builtins.input", side_effect=["A320:1"])
     def test_valid_seating_plan_with_layout(self, _):
