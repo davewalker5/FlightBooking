@@ -8,7 +8,7 @@ from .data_entry import input_flight, \
     input_aircraft_seating_plan, \
     InvalidAircraftSeatingPlanError, \
     InvalidAirportCodeError
-from ..flight_booking.exceptions import InsufficientCapacityError, \
+from flight_booking.exceptions import InsufficientCapacityError, \
     FlightIsFullError, \
     DuplicatePassportNumberError, \
     InvalidOperationError, \

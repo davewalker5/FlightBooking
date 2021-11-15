@@ -5,7 +5,7 @@ and invoking the handler for the selected option
 
 import inspect
 from .data_entry import trimmed_input
-from ..flight_booking.flight import Flight
+from flight_booking.flight import Flight
 
 
 def validate_option_definition(definition):

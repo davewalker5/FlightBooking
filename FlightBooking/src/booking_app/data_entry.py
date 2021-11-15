@@ -3,9 +3,9 @@ This module defines functions used by the console booking application package to
 """
 
 import datetime
-from ..flight_booking.airport import get_airport
-from ..flight_booking.flight import Flight
-from ..flight_booking.passenger import create_passenger
+from flight_booking.airport import get_airport
+from flight_booking.flight import Flight
+from flight_booking.passenger import create_passenger
 from .exceptions import InvalidAirportCodeError, InvalidAircraftSeatingPlanError
 
 

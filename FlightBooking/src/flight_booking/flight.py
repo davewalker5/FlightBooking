@@ -13,9 +13,10 @@ extend the following entry point:
 
 flight_booking.card_generator_plugins
 
-They should provide the follow:
+They should provide the following:
 
 card_format - the format in which boarding card data is generated e.g. html, pdf, txt
+
 card_generator - a function that generates and returns boarding card data in the format indicated by the card_format
 
 The card_generator function receives a dictionary of properties, as follows:

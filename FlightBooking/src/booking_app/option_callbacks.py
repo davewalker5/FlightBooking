@@ -3,7 +3,7 @@ This module contains callback methods for handling the options selected in the c
 """
 
 from .data_entry import input_passenger, trimmed_input, input_future_date, select_passenger, list_passengers
-from ..flight_booking import Flight
+from flight_booking import Flight
 
 
 def add_passenger_to_flight(flight):
