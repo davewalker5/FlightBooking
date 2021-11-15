@@ -23,8 +23,6 @@ Structure
 | FlightBookingPdfGenerator  | flight_booking_pdf_generator  | PDF boarding card generator plugin                               |
 +----------------------------+-------------------------------+------------------------------------------------------------------+
 
-Each project contains its own README with further details.
-
 License
 =======
 
