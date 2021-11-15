@@ -1,5 +1,5 @@
 import unittest
-from .helpers import create_test_flight, create_test_passenger
+from tests.helpers import create_test_flight, create_test_passenger
 from src.flight_booking import DuplicatePassportNumberError
 
 

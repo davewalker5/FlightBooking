@@ -1,30 +1,12 @@
 import os.path
 import unittest
 from unittest.mock import patch
-import datetime
-from src.flight_booking.utils import get_boarding_card_path
 from src.flight_booking import InvalidOperationError, MissingBoardingCardPluginError
-from .helpers import create_test_flight, create_test_passenger
-
-
-def card_generator(card_details):
-    """
-    Stub card generator monkeypatched into the flight module for testing
-    boarding card printing
-
-    :param card_details: Boarding card details
-    """
-    return "\n".join(card_details.values())
-
-
-def binary_card_generator(card_details):
-    """
-    Stub card generator monkeypatched into the flight module for testing
-    boarding card printing
-
-    :param card_details: Boarding card details
-    """
-    return "\n".join(card_details.values()).encode("utf-8")
+from tests.helpers import create_test_flight, \
+    create_test_passenger, \
+    text_card_generator, \
+    binary_card_generator, \
+    get_flight_boarding_card_file_path
 
 
 class TestFlightBoardingCards(unittest.TestCase):
@@ -32,7 +14,7 @@ class TestFlightBoardingCards(unittest.TestCase):
         self._flight = create_test_flight()
         self._passenger = create_test_passenger()
 
-    @patch("src.flight_booking.flight.card_generator_map", {"txt": card_generator})
+    @patch("src.flight_booking.flight.card_generator_map", {"txt": text_card_generator})
     def test_can_generate_boarding_cards(self):
         self._flight.load_seating("A321", "neo")
         self._flight.add_passenger(self._passenger)
@@ -40,7 +22,7 @@ class TestFlightBoardingCards(unittest.TestCase):
         self._flight.generate_boarding_cards("txt", "28A")
 
         # Boarding card text file should exist
-        boarding_card_file = get_boarding_card_path("U28549", "5D", datetime.datetime(2021, 11, 20, 10, 45, 0), "txt")
+        boarding_card_file = get_flight_boarding_card_file_path(self._flight, "5D", "txt")
         self.assertTrue(os.path.exists(boarding_card_file))
 
         # Boarding card text file should contain each of the flight details
@@ -63,7 +45,7 @@ class TestFlightBoardingCards(unittest.TestCase):
         self._flight.generate_boarding_cards("dat", "28A")
 
         # Boarding card data file should exist
-        boarding_card_file = get_boarding_card_path("U28549", "5D", datetime.datetime(2021, 11, 20, 10, 45, 0), "dat")
+        boarding_card_file = get_flight_boarding_card_file_path(self._flight, "5D", "dat")
         self.assertTrue(os.path.exists(boarding_card_file))
 
         # Boarding card text file should contain each of the flight details
@@ -78,18 +60,18 @@ class TestFlightBoardingCards(unittest.TestCase):
         self.assertIn("02:20 PM", contents)
         self.assertIn("Some Passenger", contents)
 
-    @patch("src.flight_booking.flight.card_generator_map", {"txt": card_generator})
+    @patch("src.flight_booking.flight.card_generator_map", {"txt": text_card_generator})
     def test_cannot_generate_boarding_cards_with_no_seating_plan(self):
         with self.assertRaises(InvalidOperationError):
             self._flight.generate_boarding_cards("txt", "2A")
 
-    @patch("src.flight_booking.flight.card_generator_map", {"txt": card_generator})
+    @patch("src.flight_booking.flight.card_generator_map", {"txt": text_card_generator})
     def test_cannot_generate_boarding_cards_with_no_passengers(self):
         self._flight.load_seating("A321", "neo")
         with self.assertRaises(InvalidOperationError):
             self._flight.generate_boarding_cards("txt", "2A")
 
-    @patch("src.flight_booking.flight.card_generator_map", {"txt": card_generator})
+    @patch("src.flight_booking.flight.card_generator_map", {"txt": text_card_generator})
     def test_cannot_generate_boarding_cards_with_no_seat_allocations(self):
         self._flight.load_seating("A321", "neo")
         self._flight.add_passenger(self._passenger)

@@ -45,6 +45,11 @@ class TestInputUtils(unittest.TestCase):
         d = input_date("")
         self.assertIsNone(d)
 
+    @patch("builtins.input", side_effect=["This is not a date"])
+    def test_invalid_date_errors(self, _):
+        with self.assertRaises(ValueError):
+            _ = input_date("")
+
     @patch("builtins.input", side_effect=[datetime.datetime.now().strftime("%d/%m/%Y")])
     def test_now_is_not_a_valid_past_date(self, _):
         # This is potentially vulnerable to failure if the test starts at midnight and we're now in

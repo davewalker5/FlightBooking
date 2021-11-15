@@ -4,7 +4,7 @@ import datetime
 import json
 from src.flight_booking import Flight
 from src.flight_booking.utils import get_flight_file_path
-from .helpers import create_test_flight, create_test_passenger, remove_files
+from tests.helpers import create_test_flight, create_test_passenger, remove_files
 
 
 class TestFlightSaveAndLoad(unittest.TestCase):

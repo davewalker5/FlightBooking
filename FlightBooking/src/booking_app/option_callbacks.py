@@ -125,6 +125,6 @@ def print_boarding_cards(flight):
     :param flight: Flight to generate boarding cards for
     """
     gate = trimmed_input("Gate number [ENTER to quit] ")
-    if gate is not None:
+    if gate:
         flight.generate_boarding_cards("pdf", gate)
         print(f"Boarding cards have been generated for gate {gate}")

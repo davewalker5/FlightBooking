@@ -9,6 +9,11 @@ class TestInputInteger(unittest.TestCase):
         i = input_integer("")
         self.assertEqual(2871765, i)
 
+    @patch("builtins.input", side_effect=["This is not an integer"])
+    def test_cannot_enter_invalid_integer(self, _):
+        with self.assertRaises(ValueError):
+            _ = input_integer("")
+
     @patch("builtins.input", side_effect=["2871765"])
     def test_can_enter_integer_equal_to_minimum(self, _):
         i = input_integer("", minimum=2871765)

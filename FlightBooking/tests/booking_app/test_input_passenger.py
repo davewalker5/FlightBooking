@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from src.booking_app.data_entry import input_passenger, select_passenger
-from .helpers import create_test_passenger
+from tests.helpers import create_test_passenger
 
 
 class TestInputPassenger(unittest.TestCase):

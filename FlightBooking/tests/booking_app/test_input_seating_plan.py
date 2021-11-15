@@ -5,6 +5,7 @@ from src.flight_booking.flight import Flight
 from src.booking_app.data_entry import input_aircraft_seating_plan
 from src.booking_app.exceptions import InvalidAircraftSeatingPlanError
 
+
 class TestInputSeatingPlan(unittest.TestCase):
     """
     Seating plans are read from files and can't be monkeypatched, so the tests in this class
