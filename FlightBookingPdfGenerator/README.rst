@@ -41,12 +41,41 @@ https://wkhtmltopdf.org
 Unit Tests
 ==========
 
-Unit tests can either be run in PyCharm or can be run from the command line, at the root of the project folder, as
-follows:
+To run the unit tests, a virtual environment should be created, the requirements should be installed using pip and the
+environment should be activated.
+
+The tests can then be run from the command line, at the root of the project folder, as follows:
 
 ::
 
     python -m pytest
+
+Generating Documentation
+========================
+
+To generate the documentation, a virtual environment should be created, the requirements should be installed
+using pip and the environment should be activated.
+
+HTML documentation can then be created by running the following command from the "docs" sub-folder:
+
+::
+
+    make html
+
+The resulting documentation is written to the docs/build/html folder and can be viewed by opening "index.html" in a
+web browser.
+
+Distribution
+============
+
+A distribution can be created by running the following from a command prompt at the root of the project:
+
+::
+
+    source venv/bin/activate
+    python setup.py bdist_wheel
+
+Note that the project's virtual environment should **not** be activated when creating distributions.
 
 License
 =======
