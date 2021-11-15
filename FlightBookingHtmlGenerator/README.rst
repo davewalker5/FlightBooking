@@ -40,7 +40,6 @@ The tests can then be run from the command line, at the root of the project fold
 
 ::
 
-    source venv/bin/activate
     python -m unittest
 
 Generating Documentation
