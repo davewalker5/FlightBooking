@@ -11,17 +11,19 @@ and Robert Smallshire and is intended as a practice project for the techniques c
 Structure
 =========
 
-+----------------------------+-------------------------------+------------------------------------------------------------------+
-| **Project Folder**         | **Package**                   | **Contents**                                                     |
-+----------------------------+-------------------------------+------------------------------------------------------------------+
-| FlightBooking              | flight_booking                | Classes and business logic for the booking system                |
-+----------------------------+-------------------------------+------------------------------------------------------------------+
-| FlightBooking              | booking_app                   | Simple console application built over the flight_booking package |
-+----------------------------+-------------------------------+------------------------------------------------------------------+
-| FlightBookingHtmlGenerator | flight_booking_html_generator | HTML boarding card generator plugin                              |
-+----------------------------+-------------------------------+------------------------------------------------------------------+
-| FlightBookingPdfGenerator  | flight_booking_pdf_generator  | PDF boarding card generator plugin                               |
-+----------------------------+-------------------------------+------------------------------------------------------------------+
++----------------------------+-------------------------------+---------------------------------------------------------------------+
+| **Project Folder**         | **Package**                   | **Contents**                                                        |
++----------------------------+-------------------------------+---------------------------------------------------------------------+
+| FlightBooking              | flight_booking                | Classes and business logic for the booking system                   |
++----------------------------+-------------------------------+---------------------------------------------------------------------+
+| FlightBooking              | booking_app                   | Simple console application built over the flight_booking package    |
++----------------------------+-------------------------------+---------------------------------------------------------------------+
+| FlightBooking              | booking_web                   | A simple Flask-based web site built over the flight_booking package |
++----------------------------+-------------------------------+---------------------------------------------------------------------+
+| FlightBookingHtmlGenerator | flight_booking_html_generator | HTML boarding card generator plugin                                 |
++----------------------------+-------------------------------+---------------------------------------------------------------------+
+| FlightBookingPdfGenerator  | flight_booking_pdf_generator  | PDF boarding card generator plugin                                  |
++----------------------------+-------------------------------+---------------------------------------------------------------------+
 
 License
 =======
