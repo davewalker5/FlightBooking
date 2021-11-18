@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block title %}Passenger List{% endblock %}
+
+{% block content %}
+    {% if passengers | length > 0 %}
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>DoB</th>
+                    <th>Nationality</th>
+                    <th>Residency</th>
+                    <th>Passport</th>
+                    <th>Seat Number</th>
+                    <th/>
+                </tr>
+            </thead>
+            <tbody>
+                {% for passenger_id in passengers %}
+                    <tr class={{ "row-even" if loop.index %2 == 0 else "row-odd" }}>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ passengers[passenger_id]["name"] }}</td>
+                        <td>{{ passengers[passenger_id]["gender"] }}</td>
+                        <td>
+                            {{ passengers[passenger_id]["dob"][-2:] }}/{{ passengers[passenger_id]["dob"][4:6] }}/{{ passengers[passenger_id]["dob"][0:4] }}
+                        </td>
+                        <td>{{ passengers[passenger_id]["nationality"] }}</td>
+                        <td>{{ passengers[passenger_id]["residency"] }}</td>
+                        <td>{{ passengers[passenger_id]["passport_number"] }}</td>
+                        <td>{{ passengers[passenger_id]["seat_number"] }}</td>
+                        <td>
+                            <a href="{{ url_for( 'allocate_seat', passenger_id=passenger_id ) }}">
+                                {% if passengers[passenger_id]["seat_number"] %}
+                                    Move
+                                {% else %}
+                                    Allocate
+                                {% endif %}
+                            </a> |
+                            <a href="{{ url_for( 'remove_passenger', passenger_id=passenger_id ) }}">Remove</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% if flight %}
+    <table class="striped">
+        <tr>
+            <th>Flight details</th>
+            <td>{{ flight }}</td>
+        </tr>
+        <tr>
+            <th>Flight duration</th>
+            <td>{{ flight.duration[0] }}:{{ flight.duration[1] }}</td>
+        </tr>
+        <tr>
+            <th>Passenger count</th>
+            <td>{{ flight.passengers|length }}</td>
+        </tr>
+
+        {% if flight.aircraft %}
+            <tr>
+                <th>Aircraft</th>
+                <td>{{ flight.aircraft }}</td>
+            </tr>
+
+            {% if flight.layout %}
+                <tr>
+                    <th>Layout</th>
+                    <td>{{ flight.layout }}</td>
+                </tr>
+            {% endif %}
+
+            <tr>
+                <th>Capacity</th>
+                <td>{{ flight.capacity }}</td>
+            </tr>
+            <tr>
+                <th>Available seats</th>
+                <td>{{ flight.available_capacity }}</td>
+            </tr>
+        {% endif %}
+    </table>
+{% endif %}

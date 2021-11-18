@@ -1,7 +1,7 @@
 import unittest
 import datetime
 import pytz
-from src.flight_booking import Flight
+from src.flight_booking import Flight, AirportCodeNotFoundError
 from tests.helpers import create_test_flight
 
 
@@ -28,8 +28,8 @@ class TestFlight(unittest.TestCase):
         self.assertEqual("20/11/2021", flight.departs_localtime.strftime("%d/%m/%Y"))
 
     def test_cannot_create_flight_with_invalid_airport_code(self):
-        with self.assertRaises(KeyError):
-            Flight(
+        with self.assertRaises(AirportCodeNotFoundError):
+            _ = Flight(
                 airline="EasyJet",
                 number="U28549",
                 embarkation="DODGY",

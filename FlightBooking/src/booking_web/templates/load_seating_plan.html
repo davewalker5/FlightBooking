@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Load Seating Plan{% endblock %}
+
+{% block content %}
+    {% include "error.html" with context %}
+    <form method="post">
+        <div class="form-group">
+            <label>Aircraft</label>
+            <input class="form-control" name="aircraft" placeholder="Aircraft model e.g. A321" required>
+        </div>
+
+        <div class="form-group">
+            <label>Layout</label>
+            <input class="form-control" name="layout" placeholder="Layout name e.g. neo" required>
+        </div>
+
+        <div class="button-bar">
+            <button type="button" class="btn btn-light">
+                <a href="{{ url_for('home') }}">Cancel</a>
+            </button>
+            <button type="submit" value="create" class="btn btn-primary">Load Seating Plan</button>
+        </div>
+    </form>
+{% endblock %}

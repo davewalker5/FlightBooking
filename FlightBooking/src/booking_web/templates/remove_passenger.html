@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Remove Passenger{% endblock %}
+
+{% block content %}
+    {% include "passenger_details.html" with context %}
+
+    <h3>Please confirm you want to remove this passenger:</h3>
+    <form method="post">
+        <div class="button-bar">
+            <button type="button" class="btn btn-light">
+                <a href="{{ url_for('list_passengers') }}">Cancel</a>
+            </button>
+            <button type="submit" value="create" class="btn btn-primary">Confirm</button>
+        </div>
+    </form>
+{% endblock %}

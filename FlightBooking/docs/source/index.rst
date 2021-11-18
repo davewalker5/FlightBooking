@@ -14,6 +14,7 @@ Smallshire and is intended as a practice project for the techniques contained in
 
    flight_booking/flight_booking
    booking_app/booking_app
+   booking_web/booking_web
 
 Index
 =====

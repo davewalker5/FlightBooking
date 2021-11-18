@@ -97,6 +97,7 @@ class Flight:
         :param number: Flight number
         :param departs: Departure time
         :param duration: Flight duration
+        :raises AirportCodeNotFoundError: If embarkation or destination airport codes aren't recognised
         """
         self._embarkation = get_airport(embarkation)
         self._destination = get_airport(destination)
@@ -435,6 +436,7 @@ class Flight:
         Write the flight data to a data file in JSON format
         """
         file_path = get_flight_file_path(self._number, self._departs)
+        print(file_path)
         with open(file_path, mode="wt", encoding="utf-8") as f:
             f.write(self.to_json())
 
@@ -444,9 +446,13 @@ class Flight:
 
         :param card_format: The format for the generated card data file
         :param gate: The gate number the flight will depart from
+        :raises ValueError: If the gate is None or blank
         :raises InvalidOperationError: If a seating plan has not been loaded
         :raises MissingBoardingCardPluginError: If there is no plugin available for the requested format
         """
+        if not gate:
+            raise ValueError("Gate must be specified to print boarding cards")
+
         allocations = self.get_all_seat_allocations()
         if not allocations:
             # An empty sequence or None will be falsy

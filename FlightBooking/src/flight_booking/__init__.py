@@ -19,7 +19,9 @@ from .exceptions import InsufficientCapacityError, \
     DuplicatePassportNumberError, \
     FlightIsFullError, \
     InvalidOperationError, \
-    MissingBoardingCardPluginError
+    MissingBoardingCardPluginError, \
+    SeatingPlanNotFoundError, \
+    AirportCodeNotFoundError
 
 __all__ = ["Flight",
            "create_passenger",
@@ -27,4 +29,6 @@ __all__ = ["Flight",
            "DuplicatePassportNumberError",
            "FlightIsFullError",
            "InvalidOperationError",
-           "MissingBoardingCardPluginError"]
+           "MissingBoardingCardPluginError",
+           "SeatingPlanNotFoundError",
+           "AirportCodeNotFoundError"]

@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Create New Flight{% endblock %}
+
+{% block content %}
+    {% include "error.html" with context %}
+    <form method="post">
+        <div class="form-group">
+            <label>Airline</label>
+            <input class="form-control" name="airline" placeholder="Name of the airline" required>
+        </div>
+        <div class="form-group">
+            <label>Flight number</label>
+            <input class="form-control" name="number" placeholder="Flight number" required>
+        </div>
+        <div class="form-group">
+            <label>Embarkation airport</label>
+            <input class="form-control" name="embarkation" pattern="[A-Za-z]{3}"
+                   placeholder="3-letter IATA code for the embarkation airport" required>
+        </div>
+        <div class="form-group">
+            <label>Destination airport</label>
+            <input class="form-control" name="destination" pattern="[A-Za-z]{3}"
+                   placeholder="3-letter IATA code for the destination airport" required>
+        </div>
+        <div class="form-group">
+            <label>Departure date</label>
+            <input class="form-control" name="departure_date" pattern="[\d]{2}\/[\d]{2}\/[\d]{4}"
+                   placeholder="Departure date DD/MM/YYYY" required>
+        </div>
+        <div class="form-group">
+            <label>Departure time</label>
+            <input class="form-control" name="departure_time" pattern="[\d]{2}:[\d]{2}"
+                   placeholder="Departure time HH:MM" required>
+        </div>
+        <div class="form-group">
+            <label>Flight duration</label>
+            <input class="form-control" name="duration" pattern="[\d]{1,2}:[\d]{2}"
+                   placeholder="Flight duration HH:MM" required>
+        </div>
+
+        <div class="button-bar">
+            <button type="button" class="btn btn-light">
+                <a href="{{ url_for('home') }}">Cancel</a>
+            </button>
+            <button type="button" class="btn btn-light">
+                <a href="{{ url_for('create_dummy_flight') }}">Create Dummy Flight</a>
+            </button>
+            <button type="submit" value="create" class="btn btn-primary">Create Flight</button>
+        </div>
+    </form>
+{% endblock %}

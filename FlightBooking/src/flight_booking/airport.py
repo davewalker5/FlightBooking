@@ -6,6 +6,7 @@ containing the airport properties.
 
 import json
 from .utils import get_lookup_file_path
+from .exceptions import AirportCodeNotFoundError
 
 airport_codes = None
 
@@ -33,4 +34,7 @@ def get_airport(airport_code):
     if airport_codes is None:
         airport_codes = load_airport_code_lookup()
 
-    return airport_codes[airport_code]
+    try:
+        return airport_codes[airport_code]
+    except KeyError as e:
+        raise AirportCodeNotFoundError("Unrecognised airport code", code=airport_code) from e

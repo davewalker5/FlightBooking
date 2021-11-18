@@ -60,6 +60,14 @@ class TestFlightBoardingCards(unittest.TestCase):
         self.assertIn("02:20 PM", contents)
         self.assertIn("Some Passenger", contents)
 
+    def test_cannot_generate_boarding_cards_with_missing_gate(self):
+        with self.assertRaises(ValueError):
+            self._flight.generate_boarding_cards("txt", None)
+
+    def test_cannot_generate_boarding_cards_with_blank_gate(self):
+        with self.assertRaises(ValueError):
+            self._flight.generate_boarding_cards("txt", "")
+
     @patch("src.flight_booking.flight.card_generator_map", {"txt": text_card_generator})
     def test_cannot_generate_boarding_cards_with_no_seating_plan(self):
         with self.assertRaises(InvalidOperationError):

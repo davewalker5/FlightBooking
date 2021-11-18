@@ -62,3 +62,40 @@ class FlightIsFullError(Exception):
 
 class InvalidOperationError(Exception):
     pass
+
+
+class SeatingPlanNotFoundError(Exception):
+    def __init__(self, message, aircraft=None, layout=None):
+        super().__init__(message)
+        self._aircraft = aircraft
+        self._layout = layout
+
+    @property
+    def aircraft(self):
+        return self._aircraft
+
+    @property
+    def layout(self):
+        return self._layout
+
+    def __str__(self):
+        return f"{self.args[0]} for aircraft '{self._aircraft}', layout '{self._layout}'"
+
+    def __repr__(self):
+        return f"SeatingPlanNotFoundError({self.args[0]!r}, {self._aircraft!r}, {self._layout!r})"
+
+
+class AirportCodeNotFoundError(Exception):
+    def __init__(self, message, code=None):
+        super().__init__(message)
+        self._code = code
+
+    @property
+    def code(self):
+        return self._code
+
+    def __str__(self):
+        return f"{self.args[0]} for code '{self._code}'"
+
+    def __repr__(self):
+        return f"SeatingPlanNotFoundError({self.args[0]!r}, {self._code!r})"

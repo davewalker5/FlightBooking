@@ -1,0 +1,24 @@
+<table class="striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>DoB</th>
+            <th>Nationality</th>
+            <th>Residency</th>
+            <th>Passport</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ passenger["name"] }}</td>
+            <td>{{ passenger["gender"] }}</td>
+            <td>
+                {{ passenger["dob"][-2:] }}/{{ passenger["dob"][4:6] }}/{{ passenger["dob"][0:4] }}
+            </td>
+            <td>{{ passenger["nationality"] }}</td>
+            <td>{{ passenger["residency"] }}</td>
+            <td>{{ passenger["passport_number"] }}</td>
+        </tr>
+    </tbody>
+</table>

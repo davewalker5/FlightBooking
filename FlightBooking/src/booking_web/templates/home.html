@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    {% if flight %}
+        {% include "flight_details.html" with context %}
+        {% include "error.html" with context %}
+        {% include "message.html" with context %}
+    {% else %}
+        {% include "instructions.html" with context %}
+    {% endif %}
+{% endblock %}
