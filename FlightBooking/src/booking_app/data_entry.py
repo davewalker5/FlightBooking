@@ -4,9 +4,8 @@ This module defines functions used by the console booking application package to
 
 import datetime
 from flight_booking.airport import get_airport
-from flight_booking.flight import Flight
-from flight_booking.passenger import create_passenger
-from .exceptions import InvalidAirportCodeError, InvalidAircraftSeatingPlanError
+from flight_booking import Flight, create_passenger
+from .exceptions import InvalidAircraftSeatingPlanError
 
 
 def trimmed_input(prompt):
@@ -101,18 +100,13 @@ def input_airport_code(airport_type):
     Prompt for an airport code and return the corresponding airport object
 
     :param airport_type: Text used in the prompt to indicate embarkation or destination airport
-    :raises InvalidAirportCodeError: If the input is not a recognised IATA airport code
     :return: A dictionary of airport properties or None if cancelled
     """
     code = trimmed_input(f"{airport_type} airport code [ENTER to quit] ")
     if len(code) == 0:
         return None
 
-    try:
-        airport = get_airport(code)
-    except KeyError:
-        raise InvalidAirportCodeError(f"Airport code is not recognised", code)
-
+    airport = get_airport(code)
     return airport
 
 
@@ -200,15 +194,7 @@ def input_aircraft_seating_plan(flight):
 
     aircraft = words[0].strip()
     layout = words[1].strip() if len(words) > 1 else None
-
-    try:
-        flight.load_seating(aircraft, layout)
-    except FileNotFoundError as e:
-        raise InvalidAircraftSeatingPlanError(
-            f"No seating plan found for aircraft model {aircraft} with layout {layout}",
-            aircraft=aircraft,
-            layout=layout
-        ) from e
+    flight.load_seating(aircraft, layout)
 
 
 def input_flight():

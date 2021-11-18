@@ -7,9 +7,21 @@ class TestSeatingPlan(TestCase):
         self._a320 = read_plan("EasyJet", "A320", "1")
         self._a321 = read_plan("EasyJet", "A321", "neo")
 
-    def test_read_plan(self):
+    def test_can_read_valid_plan(self):
         self.assertIsNotNone(self._a321)
         self.assertEqual(len(get_unallocated_seats(self._a321)), 235)
+
+    def test_cannot_read_plan_with_invalid_airline(self):
+        with self.assertRaises(SeatingPlanNotFoundError):
+            _ = read_plan("Not a valid airline", "A321", "neo")
+
+    def test_cannot_read_plan_with_invalid_aircraft(self):
+        with self.assertRaises(SeatingPlanNotFoundError):
+            _ = read_plan("EasyJet", "Not a valid aircraft", "neo")
+
+    def test_cannot_read_plan_with_invalid_layout(self):
+        with self.assertRaises(SeatingPlanNotFoundError):
+            _ = read_plan("EasyJet", "A321", "not a valid layout")
 
     def test_get_seating_row(self):
         row = get_seating_row(self._a320, "1A")

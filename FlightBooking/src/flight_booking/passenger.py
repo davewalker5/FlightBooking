@@ -20,6 +20,24 @@ def create_passenger(name, gender, dob, nationality, residency, passport_number)
     :param passport_number: Passenger's passport number
     :return: A dictionary representing the passenger
     """
+    if not name:
+        raise ValueError("Name is mandatory")
+
+    if gender not in ["M", "F"]:
+        raise ValueError(f"'{gender}' is not a valid gender")
+
+    if not dob:
+        raise ValueError("Date of birth is mandatory")
+
+    if not nationality:
+        raise ValueError("Nationality is mandatory")
+
+    if not residency:
+        raise ValueError("Country of residency is mandatory")
+
+    if not passport_number:
+        raise ValueError("Passport number is mandatory")
+
     return {
         "id": str(uuid.uuid4()),
         "name": name,

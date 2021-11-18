@@ -11,10 +11,44 @@ and Robert Smallshire and is intended as a practice project for the techniques c
 Structure
 =========
 
-The "flight_booking" package implements the classes and business logic for the booking system.
++----------------+---------------------------------------------------------------------------------------------------+
+| **Package**    | **Contents**                                                                                      |
++----------------+---------------------------------------------------------------------------------------------------+
+| flight_booking | The core classes and business logic for the booking system                                        |
++----------------+---------------------------------------------------------------------------------------------------+
+| booking_app    | A simple console application based on the functionality provided by the "flight_booking" package  |
++----------------+---------------------------------------------------------------------------------------------------+
+| booking_web    | A simple Flask-based web site based on the functionality provided by the "flight_booking" package |
++----------------+---------------------------------------------------------------------------------------------------+
 
-The "booking_app" package implement a simple console application based on the functionality provided by the
-"flight_booking" package.
+Running the Applications
+========================
+
+To run the applications, a virtual environment should be created, the requirements should be installed using pip and the
+environment should be activated.
+
+To run the console booking application, enter the following from the "src" folder:
+
+::
+
+    python -m booking_app
+
+To run the web-based application in the Flask development web server, enter the following from the "src/booking_web"
+folder:
+
+::
+
+    export PYTHONPATH=`pwd`/..
+    export FLASK_APP=booking.py
+    export FLASK_ENV=development
+    flask run
+
+The first three commands will need to be modified based on the current operating system. Once the development server
+is running, browse to the following URL in a  web browser:
+
+::
+
+    http://127.0.0.1:5000/
 
 Unit Tests and Coverage
 =======================

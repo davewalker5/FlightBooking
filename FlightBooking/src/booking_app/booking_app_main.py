@@ -4,15 +4,14 @@ This module defines the main entry point for the console booking application pac
 
 from .option_handler import validate_all_options, display_options, input_option, call_option_function
 from .option_callbacks import *
-from .data_entry import input_flight, \
-    input_aircraft_seating_plan, \
-    InvalidAircraftSeatingPlanError, \
-    InvalidAirportCodeError
-from flight_booking.exceptions import InsufficientCapacityError, \
+from .data_entry import input_flight, input_aircraft_seating_plan
+from flight_booking import InsufficientCapacityError, \
     FlightIsFullError, \
     DuplicatePassportNumberError, \
     InvalidOperationError, \
-    MissingBoardingCardPluginError
+    SeatingPlanNotFoundError, \
+    MissingBoardingCardPluginError, \
+    AirportCodeNotFoundError
 
 # The available options are represented as a dictionary in which the key is the input
 # the user must provide to select the option and the value is a dictionary with a
@@ -65,8 +64,8 @@ def main():
                         FlightIsFullError,
                         DuplicatePassportNumberError,
                         InvalidOperationError,
-                        InvalidAircraftSeatingPlanError,
-                        InvalidAirportCodeError,
-                        MissingBoardingCardPluginError
+                        SeatingPlanNotFoundError,
+                        MissingBoardingCardPluginError,
+                        AirportCodeNotFoundError
                         ) as e:
                     print(e)

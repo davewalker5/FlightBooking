@@ -1,0 +1,15 @@
+ <strong>
+    <nav>
+        <ul class="menu">
+            {% for option in options_map %}
+                {% if not options_map[loop.index0]["requires_flight"] or flight %}
+                    <li>
+                        <a href="{{ url_for(options_map[loop.index0]['view']) }}">
+                            {{ options_map[loop.index0]["description"] }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+</strong>

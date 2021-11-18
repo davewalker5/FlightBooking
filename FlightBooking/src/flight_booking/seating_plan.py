@@ -31,7 +31,9 @@ CSV row would be:
 """
 
 import csv
+import os
 from .utils import get_seating_file_path
+from .exceptions import SeatingPlanNotFoundError
 
 ROW_NUMBER_COLUMN = 0
 CLASS_COLUMN = 1
@@ -50,6 +52,10 @@ def read_plan(airline, aircraft, layout=None):
 
     # Construct the path to the seating plan file
     file_path = get_seating_file_path(airline, aircraft, layout)
+    if not os.path.exists(file_path):
+        raise SeatingPlanNotFoundError(f"Seating plan not found for aircraft {aircraft}, layout {layout}",
+                                       aircraft=aircraft,
+                                       layout=layout)
 
     # Read the rows, throwing away the (mandatory) headers
     with open(file_path, mode="rt", encoding="utf-8") as f:

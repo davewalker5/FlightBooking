@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch
+from src.flight_booking import SeatingPlanNotFoundError
 from tests.helpers import create_test_flight
 from src.booking_app.data_entry import input_aircraft_seating_plan
 from src.booking_app.exceptions import InvalidAircraftSeatingPlanError
@@ -39,12 +40,12 @@ class TestInputSeatingPlan(unittest.TestCase):
 
     @patch("builtins.input", side_effect=["A380"])
     def test_invalid_aircraft_errors(self, _):
-        with self.assertRaises(InvalidAircraftSeatingPlanError):
+        with self.assertRaises(SeatingPlanNotFoundError):
             input_aircraft_seating_plan(self._flight)
 
     @patch("builtins.input", side_effect=["A320:2"])
     def test_invalid_layout_for_valid_aircraft_errors(self, _):
-        with self.assertRaises(InvalidAircraftSeatingPlanError):
+        with self.assertRaises(SeatingPlanNotFoundError):
             input_aircraft_seating_plan(self._flight)
 
     @patch("builtins.input", side_effect=["A320:1:2"])
