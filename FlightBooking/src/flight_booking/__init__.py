@@ -14,6 +14,7 @@ the ValueError and FileNotFoundError exceptions.
 """
 
 from .flight import Flight
+from .airport import get_airport
 from .passenger import create_passenger
 from .exceptions import InsufficientCapacityError, \
     DuplicatePassportNumberError, \
@@ -24,6 +25,7 @@ from .exceptions import InsufficientCapacityError, \
     AirportCodeNotFoundError
 
 __all__ = ["Flight",
+           "get_airport",
            "create_passenger",
            "InsufficientCapacityError",
            "DuplicatePassportNumberError",

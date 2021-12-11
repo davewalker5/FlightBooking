@@ -45,7 +45,7 @@ class TestOptionCallbacks(unittest.TestCase):
     @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"},
             "RMU": {"code": "RMU", "name": "Murcia International Airport", "tz": "Europe/Madrid"}})
-    @patch("builtins.input", side_effect=["U28549", "20/11/2021"])
+    @patch("builtins.input", side_effect=["U28549", "20/11/2099"])
     def test_can_load_flight(self, _):
         delete_flight_data_file(self._flight)
         save_flight(self._flight)
@@ -54,7 +54,7 @@ class TestOptionCallbacks(unittest.TestCase):
         self.assertEqual("RMU", flight.destination_airport_code)
         self.assertEqual("EasyJet", flight.airline)
         self.assertEqual("U28549", flight.number)
-        self.assertEqual("20/11/2021", flight.departs_localtime.strftime("%d/%m/%Y"))
+        self.assertEqual("20/11/2099", flight.departs_localtime.strftime("%d/%m/%Y"))
         self.assertEqual((2, 35), flight.duration)
 
     @patch("builtins.input", side_effect=[""])

@@ -19,12 +19,20 @@ def get_data_folder(folder_name):
     :param folder_name: Name of the sub-folder
     :return: Full path to the specified sub-folder
     """
+
+    # Get the path to the data folder
     data_folder = os.getenv(FLIGHT_BOOKING_DATA_FOLDER_ENV)
     if data_folder is None:
         # This assumes the data folder is at the top-level of the project
         project_folder = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         data_folder = os.path.join(project_folder, "data")
-    return os.path.join(data_folder, folder_name)
+
+    # Get the path to the requested sub-folder and create it if it doesn't exist
+    data_sub_folder = os.path.join(data_folder, folder_name)
+    if not os.path.exists(data_sub_folder):
+        os.makedirs(data_sub_folder)
+
+    return data_sub_folder
 
 
 def get_flight_file_path(number, departure_date):

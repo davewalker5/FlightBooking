@@ -23,7 +23,7 @@ def create_test_flight():
         number="U28549",
         embarkation="LGW",
         destination="RMU",
-        departs=datetime.datetime(2021, 11, 20, 10, 45, 0),
+        departs=datetime.datetime(2099, 11, 20, 10, 45, 0),
         duration=datetime.timedelta(hours=2, minutes=35)
     )
 

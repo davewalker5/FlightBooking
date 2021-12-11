@@ -12,7 +12,7 @@ class TestFlight(unittest.TestCase):
         self.assertEqual("RMU", flight.destination_airport_code)
         self.assertEqual("EasyJet", flight.airline)
         self.assertEqual("U28549", flight.number)
-        self.assertEqual("20/11/2021", flight.departs_localtime.strftime("%d/%m/%Y"))
+        self.assertEqual("20/11/2099", flight.departs_localtime.strftime("%d/%m/%Y"))
         self.assertEqual((2, 35), flight.duration)
 
     def test_can_create_flight_with_timezone_aware_departure(self):
