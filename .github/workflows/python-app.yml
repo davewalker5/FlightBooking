@@ -39,6 +39,7 @@ jobs:
 
     - name: Generate Coverage Report
       run: |
+        cd FlightBooking
         export PYTHONPATH=`pwd`/src
         coverage run -m unittest
         coverage xml
