@@ -2,6 +2,10 @@
     :target: https://github.com/davewalker5/FlightBooking/actions
     :alt: Build Status
 
+.. image:: https://codecov.io/gh/davewalker5/FlightBooking/branch/main/graph/badge.svg?token=BRJB8YGOPU
+    :target: https://codecov.io/gh/davewalker5/FlightBooking
+    :alt: Coverage
+
 .. image:: https://img.shields.io/github/issues/davewalker5/FlightBooking
     :target: https://github.com/davewalker5/FlightBooking/issues
     :alt: GitHub issues
