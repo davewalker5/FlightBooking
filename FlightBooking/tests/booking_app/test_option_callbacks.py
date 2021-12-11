@@ -102,7 +102,7 @@ class TestOptionCallbacks(unittest.TestCase):
         remove_passenger(self._flight)
         self.assertEqual(1, len(self._flight.passengers))
 
-    @patch("flight_booking.flight.card_generator_map", {"pdf": binary_card_generator})
+    @patch("src.flight_booking.flight.card_generator_map", {"pdf": binary_card_generator})
     @patch("builtins.input", side_effect=["28A"])
     def test_can_generate_boarding_cards(self, _):
         self._flight.load_seating("A321", "neo")
