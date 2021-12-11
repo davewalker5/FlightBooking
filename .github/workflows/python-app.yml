@@ -36,3 +36,14 @@ jobs:
         cd FlightBooking
         export PYTHONPATH=`pwd`/src
         python -m unittest
+
+    - name: Generate Coverage Report
+      run: |
+        export PYTHONPATH=`pwd`/src
+        coverage run -m unittest
+        coverage xml
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
