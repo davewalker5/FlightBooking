@@ -1,5 +1,26 @@
-Airline Booking  System
-=======================
+.. image:: https://img.shields.io/github/issues/davewalker5/FlightBooking
+    :target: https://github.com/davewalker5/FlightBooking/issues
+    :alt: GitHub issues
+
+.. image:: https://img.shields.io/github/v/release/davewalker5/FlightBooking.svg?include_prereleases
+    :target: https://github.com/davewalker5/FlightBooking/releases
+    :alt: Releases
+
+.. image:: https://img.shields.io/badge/License-mit-blue.svg
+    :target: https://github.com/davewalker5/FlightBooking/blob/main/LICENSE
+    :alt: License
+
+.. image:: https://img.shields.io/badge/language-python-blue.svg
+    :target: https://www.python.org
+    :alt: Language
+
+.. image:: https://img.shields.io/github/languages/code-size/davewalker5/FlightBooking
+    :target: https://github.com/davewalker5/FlightBooking/
+    :alt: GitHub code size in bytes
+
+
+flight_booking
+==============
 
 A tutorial/demonstration project implementing a Python console application for creating and managing airline flight
 bookings and passengers.
@@ -11,19 +32,104 @@ and Robert Smallshire and is intended as a practice project for the techniques c
 Structure
 =========
 
-+----------------------------+-------------------------------+---------------------------------------------------------------------+
-| **Project Folder**         | **Package**                   | **Contents**                                                        |
-+----------------------------+-------------------------------+---------------------------------------------------------------------+
-| FlightBooking              | flight_booking                | Classes and business logic for the booking system                   |
-+----------------------------+-------------------------------+---------------------------------------------------------------------+
-| FlightBooking              | booking_app                   | Simple console application built over the flight_booking package    |
-+----------------------------+-------------------------------+---------------------------------------------------------------------+
-| FlightBooking              | booking_web                   | A simple Flask-based web site built over the flight_booking package |
-+----------------------------+-------------------------------+---------------------------------------------------------------------+
-| FlightBookingHtmlGenerator | flight_booking_html_generator | HTML boarding card generator plugin                                 |
-+----------------------------+-------------------------------+---------------------------------------------------------------------+
-| FlightBookingPdfGenerator  | flight_booking_pdf_generator  | PDF boarding card generator plugin                                  |
-+----------------------------+-------------------------------+---------------------------------------------------------------------+
++----------------+---------------------------------------------------------------------------------------------------+
+| **Package**    | **Contents**                                                                                      |
++----------------+---------------------------------------------------------------------------------------------------+
+| flight_booking | The core classes and business logic for the booking system                                        |
++----------------+---------------------------------------------------------------------------------------------------+
+| booking_app    | A simple console application based on the functionality provided by the "flight_booking" package  |
++----------------+---------------------------------------------------------------------------------------------------+
+| booking_web    | A simple Flask-based web site based on the functionality provided by the "flight_booking" package |
++----------------+---------------------------------------------------------------------------------------------------+
+
+Running the Applications
+========================
+
+To run the applications, a virtual environment should be created, the requirements should be installed using pip and the
+environment should be activated.
+
+To run the console booking application, enter the following from the "src" folder:
+
+::
+
+    python -m booking_app
+
+To run the web-based application in the Flask development web server, enter the following from the "src/booking_web"
+folder:
+
+::
+
+    export PYTHONPATH=`pwd`/..
+    export FLASK_APP=booking.py
+    export FLASK_ENV=development
+    flask run
+
+The first three commands will need to be modified based on the current operating system. Once the development server
+is running, browse to the following URL in a  web browser:
+
+::
+
+    http://127.0.0.1:5000/
+
+Unit Tests and Coverage
+=======================
+
+To run the unit tests, a virtual environment should be created, the requirements should be installed using pip and the
+environment should be activated.
+
+The tests can then be run from the command line, at the root of the project folder, as follows:
+
+::
+
+    export PYTHONPATH=`pwd`/src/
+    python -m unittest
+
+The first command adds the source folder, containing the two packages under test, to the PYTHONPATH environment
+variable so the packages will be found when the tests attempt to import them. The command will need to be modified
+based on the current operating system.
+
+Similarly, a coverage report can be generated by running the following commands from the root of the project folder:
+
+::
+
+    export PYTHONPATH=`pwd`/src/
+    coverage run --branch --source src -m unittest discover
+    coverage html -d cov_html
+
+This will create a folder "cov_html" containing the coverage report in HTML format.
+
+Generating Documentation
+========================
+
+To generate the documentation, a virtual environment should be created, the requirements should be installed
+using pip and the environment should be activated.
+
+HTML documentation can then be created by running the following command from the "docs" sub-folder:
+
+::
+
+    make html
+
+The resulting documentation is written to the docs/build/html folder and can be viewed by opening "index.html" in a
+web browser.
+
+Dependencies
+============
+
+The flight booking application has dependencies listed in requirements.txt and also requires that one or more of the
+boarding card generators are installed to enable generation and saving boarding cards.
+
+Distribution
+============
+
+A distribution can be created that includes both the "flight_booking" and "booking_app" packages by running the
+following from a command prompt at the root of the project:
+
+::
+
+    python setup.py bdist_wheel
+
+Note that the project's virtual environment should **not** be activated when creating distributions.
 
 License
 =======
