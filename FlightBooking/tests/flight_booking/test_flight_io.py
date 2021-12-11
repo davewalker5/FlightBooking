@@ -31,7 +31,7 @@ class TestFlightSaveAndLoad(unittest.TestCase):
         self._flight.allocate_seat("5D", self._passenger["id"])
         self._flight.save()
 
-        flight = Flight.load_flight("U28549", datetime.datetime(2021, 11, 20, 10, 45, 0))
+        flight = Flight.load_flight("U28549", datetime.datetime(2099, 11, 20, 10, 45, 0))
         self.assertEqual("LGW", flight.embarkation_airport_code)
         self.assertEqual("RMU", flight.destination_airport_code)
         self.assertEqual("EasyJet", flight.airline)
@@ -57,6 +57,6 @@ class TestFlightSaveAndLoad(unittest.TestCase):
 
     def test_can_get_printable_flight_details(self):
         details = "\n".join(self._flight.printable_details)
-        expected = ["EasyJet", "U28549", "LGW", "RMU", "2021-11-20 10:45:00", "2:35:00"]
+        expected = ["EasyJet", "U28549", "LGW", "RMU", "2099-11-20 10:45:00", "2:35:00"]
         for value in expected:
             self.assertTrue(value in details)

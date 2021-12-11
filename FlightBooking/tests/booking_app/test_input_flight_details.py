@@ -7,14 +7,14 @@ class TestInputFlightDetails(unittest.TestCase):
     @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"},
             "RMU": {"code": "RMU", "name": "Murcia International Airport", "tz": "Europe/Madrid"}})
-    @patch("builtins.input", side_effect=["LGW", "RMU", "EasyJet", "EZY8549", "20/11/2021", "10:15", "2:25"])
+    @patch("builtins.input", side_effect=["LGW", "RMU", "EasyJet", "EZY8549", "20/11/2099", "10:15", "2:25"])
     def test_full_flight_details_entry(self, _):
         flight = input_flight()
         self.assertEqual("LGW", flight.embarkation_airport_code)
         self.assertEqual("RMU", flight.destination_airport_code)
         self.assertEqual("EasyJet", flight.airline)
         self.assertEqual("EZY8549", flight.number)
-        self.assertEqual("20/11/2021", flight.departure_date.strftime("%d/%m/%Y"))
+        self.assertEqual("20/11/2099", flight.departure_date.strftime("%d/%m/%Y"))
         self.assertEqual("10:15", flight.departs_localtime.strftime("%H:%M"))
         self.assertEqual((2, 25), flight.duration)
 
@@ -57,7 +57,7 @@ class TestInputFlightDetails(unittest.TestCase):
     @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"},
             "RMU": {"code": "RMU", "name": "Murcia International Airport", "tz": "Europe/Madrid"}})
-    @patch("builtins.input", side_effect=["LGW", "RMU", "EasyJet", "EZY8549", "20/11/2021", ""])
+    @patch("builtins.input", side_effect=["LGW", "RMU", "EasyJet", "EZY8549", "20/11/2099", ""])
     def test_cancel_on_departure_time(self,  _):
         flight = input_flight()
         self.assertIsNone(flight)
@@ -65,7 +65,7 @@ class TestInputFlightDetails(unittest.TestCase):
     @patch("flight_booking.airport.airport_codes",
            {"LGW": {"code": "LGW", "name": "London Gatwick", "tz": "Europe/London"},
             "RMU": {"code": "RMU", "name": "Murcia International Airport", "tz": "Europe/Madrid"}})
-    @patch("builtins.input", side_effect=["LGW", "RMU", "EasyJet", "EZY8549", "20/11/2021", "10:15", ""])
+    @patch("builtins.input", side_effect=["LGW", "RMU", "EasyJet", "EZY8549", "20/11/2099", "10:15", ""])
     def test_cancel_on_duration(self,  _):
         flight = input_flight()
         self.assertIsNone(flight)
