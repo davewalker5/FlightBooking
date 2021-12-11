@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import patch
 from src.booking_app.data_entry import input_airport_code
-# from src.flight_booking import AirportCodeNotFoundError
 
 
 class TestInputAirport(unittest.TestCase):
